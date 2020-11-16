@@ -2,7 +2,7 @@ import React, { Component, PureComponent } from 'react';
 import { StyleSheet, Button, View, SafeAreaView, Text, Alert } from 'react-native';
 // import Sound from 'react-native-sound'
 // import SoundPlayer from 'react-native-sound-player';
-// import { Audio } from 'expo-av';
+import { Audio } from 'expo-av';
 
 class PlayAudio extends Component {
     constructor(){
@@ -23,15 +23,17 @@ class PlayAudio extends Component {
                     const reader = body.getReader();
                     return reader
                             .read()
-                            .then(result => {return result});
+                            .then(result => result);
                 })
                 .catch(err => console.log(err));
             
                 let blob = new Blob([audio.value], {type: 'audio/mp3'});
                 let url = window.URL.createObjectURL(blob);
-                window.audio = new Audio();
-                window.audio.src = url;
-                window.audio.play();
+                await Audio.Sound.createAsync(
+                    url,
+                    {shouldPlay: true}
+                )
+                this.setState({ value: true })
             }catch(err){
                 console.log(err);
             }
