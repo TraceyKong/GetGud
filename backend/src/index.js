@@ -1,16 +1,13 @@
 const express = require('express');
-const admin = require('firebase-admin');
-const serviceAccount = require('../get-gud-key.json');
+const {Datastore} = require('@google-cloud/datastore');
 const cors = require('cors');
-
-// Connect to firebase
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://get-gud-fee28.firebaseio.com"
-});
+const serviceAccount = require('../serviceAccount.json');
 
 // Database
-const db = admin.firestore();
+const db = new Datastore({
+    projectId: serviceAccount.project_id,
+    keyFilename: './serviceAccount.json'
+});
 
 // Express app
 const app = express();
@@ -19,7 +16,15 @@ app.use(express.json());    // Body parser
 app.use(cors());
 
 app.post('/test', async (req, res) => {
-    return res.json("Hello, world!");
+    try{
+        await db.save({
+            key: db.key('visit'),
+            data: {data:'test'}
+        });
+        res.json('done');
+    }catch(err){
+        res.json(err);
+    }
 })
 
 app.listen(5000, () => console.log('App listening on port 5000.'));
