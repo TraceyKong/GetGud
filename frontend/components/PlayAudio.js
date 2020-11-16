@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { StyleSheet, Button, View, SafeAreaView, Text, Alert } from 'react-native';
-import Sound from 'react-native-sound'
-import SoundPlayer from 'react-native-sound-player';
+// import Sound from 'react-native-sound'
+// import SoundPlayer from 'react-native-sound-player';
+import { Audio } from 'expo-av';
 
 class PlayAudio extends Component {
-    handlePress(){
+    handlePress = async () => {
         // try {
         //     // play the file tone.mp3
         //     SoundPlayer.playSoundFile('tone', 'mp3')
@@ -13,14 +14,23 @@ class PlayAudio extends Component {
         //   } catch (e) {
         //     console.log(`cannot play the sound file`, e)
         //   }
-        const sound = new Sound('http://sounds.com/some-sound', null, (error) => {
-        if (error) {
-            // do something
-        }
+        // const sound = new Sound('http://sounds.com/some-sound', null, (error) => {
+        // if (error) {
+        //     // do something
+        // }
         
         // play when loaded
-        sound.play();
-        });
+        // sound.play();
+        // });
+
+        try{
+            await Audio.Sound.createAsync(
+                {uri: 'gs://robust-primacy-294723.appspot.com/Dunkey_Quack_Enhanced.mp3'},
+                {shouldPlay: true}
+            );
+        }catch(err){
+            console.log(err);
+        }
     }
 
     render() {
