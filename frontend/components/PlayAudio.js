@@ -1,36 +1,40 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import { StyleSheet, Button, View, SafeAreaView, Text, Alert } from 'react-native';
 // import Sound from 'react-native-sound'
 // import SoundPlayer from 'react-native-sound-player';
-import { Audio } from 'expo-av';
+// import { Audio } from 'expo-av';
 
 class PlayAudio extends Component {
-    handlePress = async () => {
-        // try {
-        //     // play the file tone.mp3
-        //     SoundPlayer.playSoundFile('tone', 'mp3')
-        //     // or play from url
-        //     SoundPlayer.playUrl('placeholder.url')
-        //   } catch (e) {
-        //     console.log(`cannot play the sound file`, e)
-        //   }
-        // const sound = new Sound('http://sounds.com/some-sound', null, (error) => {
-        // if (error) {
-        //     // do something
-        // }
-        
-        // play when loaded
-        // sound.play();
-        // });
+    constructor(){
+        super();
+        this.state = { value: true }
+        this.handlePress = this.handlePress.bind(this);
+    }
 
+    handlePress = async () => {
+        this.setState({ value: false })
         try{
-            await Audio.Sound.createAsync(
-                {uri: 'gs://robust-primacy-294723.appspot.com/Dunkey_Quack_Enhanced.mp3'},
-                {shouldPlay: true}
-            );
-        }catch(err){
-            console.log(err);
-        }
+            let audio = await fetch('http://localhost:5000/test', {
+                mode: 'cors',    
+                method: 'POST'
+            })
+                .then(response => response.body)
+                .then(body => {
+                    const reader = body.getReader();
+                    return reader
+                            .read()
+                            .then(result => {return result});
+                })
+                .catch(err => console.log(err));
+            
+                let blob = new Blob([audio.value], {type: 'audio/mp3'});
+                let url = window.URL.createObjectURL(blob);
+                window.audio = new Audio();
+                window.audio.src = url;
+                window.audio.play();
+            }catch(err){
+                console.log(err);
+            }
     }
 
     render() {
@@ -38,6 +42,7 @@ class PlayAudio extends Component {
             <Button 
                 onPress={this.handlePress}
                 title="Play Quack"
+                disabled={!this.state.value}
             />
         )
     }
