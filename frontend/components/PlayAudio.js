@@ -1,18 +1,38 @@
 import React, { Component, PureComponent } from 'react';
 import { StyleSheet, Button, View, SafeAreaView, Text, Alert } from 'react-native';
 import { Audio } from 'expo-av';
+import socketIOClient from "socket.io-client";
+import { useState, useEffect } from 'react';
 
-class PlayAudio extends Component {
+const ENDPOINT = "http://localhost:8080";
+const socket = socketIOClient(ENDPOINT);
+
+
+export default class PlayAudio extends Component {
+
     constructor(){
         super();
         this.state = { 
             value: true,
         }
-        this.handlePress = this.handlePress.bind(this);
+        this.handlePlay = this.handlePlay.bind(this);
+        this.handleClick = this.handleClick.bind(this);
+    }
+    
+    componentDidMount() {
+        socket.on('message', () => {
+        })
+        socket.addEventListener('message', () => {
+            this.handlePlay();
+        })
     }
 
-    handlePress = async () => {
-        this.setState({ value: false })
+    handleClick = () => {
+        socket.emit("message")
+    }
+
+    handlePlay = async () => {
+        this.setState({ value: false });
         try{
             let audio = await fetch('http://localhost:8080/test', {
                 mode: 'cors',    
@@ -43,15 +63,14 @@ class PlayAudio extends Component {
         return (
           <View>
             <Button
-              onPress={this.handlePress}
+              onPress={(event) => {
+                //   this.handlePlay();
+                  this.handleClick();
+                }}
               title="Play Quack"
               disabled={!this.state.value}
             />
-
-            <Text>websocket echo: {this.state.echo}</Text>
           </View>
         );
     }
 }
-
-export default PlayAudio;

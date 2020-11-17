@@ -7,8 +7,7 @@ const fs = require('fs');
 const http = require("http");
 const socketIo = require("socket.io");
 
-// const port = process.env.PORT || 4001;
-const port = 8080;
+const port = process.env.PORT || 4001;
 
 // Database
 const db = new Datastore({
@@ -55,6 +54,11 @@ io.on("connection", (socket) => {
     clearInterval(interval);
   }
   interval = setInterval(() => getApiAndEmit(socket), 1000);
+
+  socket.on('message', function (msg) {
+      socket.emit('message', msg)
+  })
+
   socket.on("disconnect", () => {
     console.log("Client disconnected");
     clearInterval(interval);
@@ -69,8 +73,13 @@ const getApiAndEmit = socket => {
     socket.emit("FromAPI", response);
 };
 
+const buttonSuccessful = socket => {
+    const response = new Date();
+    socket.on("message", () => {
+        socket.emit("message", response);
+      })
+}
+
 
 
 // app.listen(5000, () => console.log('App listening on port 5000.'));
-
-
