@@ -3,7 +3,6 @@ const express = require('express');
 const {Datastore} = require('@google-cloud/datastore');
 const {Storage} = require('@google-cloud/storage');
 const cors = require('cors');
-const socketIo = require("socket.io");
 
 // Database
 const db = new Datastore({
@@ -26,7 +25,7 @@ app.use(cors());
 
 app.post('/test', async (req, res) => {
         const remoteFile = bucket.file(process.env.GCP_AUDIO_NAME);
-        let remoteReadStream = remoteFile.createReadStream();
+        const remoteReadStream = remoteFile.createReadStream();
         remoteReadStream.pipe(res);
 })
 
@@ -42,15 +41,20 @@ const io = require('socket.io')(server, {
     }
 }); // < Interesting!
 
-io.on('connection', (socket) => {
+io.on("connection", (socket) => {
     let interval;
     console.log("New client connected");
     if (interval) {
         clearInterval(interval);
     }
     interval = setInterval(() => getApiAndEmit(socket), 1000);
-    socket.on('disconnect', () => {
-        console.log('Client disconnected');
+
+    socket.on('message', function (msg) {
+        socket.emit('message', msg)
+    })
+
+    socket.on("disconnect", () => {
+        console.log("Client disconnected");
         clearInterval(interval);
     });
 });
@@ -62,6 +66,13 @@ const getApiAndEmit = socket => {
     // Emitting a new message. Will be consumed by the client
     socket.emit('FromAPI', response);
 };
+
+const buttonSuccessful = socket => {
+    const response = new Date();
+    socket.on("message", () => {
+        socket.emit("message", response);
+      })
+}
 
 
 

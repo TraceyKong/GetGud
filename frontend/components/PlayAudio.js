@@ -1,32 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, View, Text } from 'react-native';
 import { Audio } from 'expo-av';
+import socketIOClient from "socket.io-client";
 
-function PlayAudio(){
+const ENDPOINT = "http://localhost:8080";
+const socket = socketIOClient(ENDPOINT);
+
+export default function PlayAudio() {
     const [value, setValue] = useState(true);
+    
+    useEffect(() => {
+        socket.on('message', () => {
+        })
+        socket.addEventListener('message', () => {
+            handlePlay();
+            console.log('played');
+        })
+    }, []);
 
-    const handlePress = async () => {
+    const handleClick = () => {
+        socket.emit("message")
+    }
+
+    const handlePlay = async () => {
         setValue(false);
+        const soundObj = new Audio.Sound();
         try{
-            let audio = await fetch('http://localhost:8080/test', {
-                mode: 'cors',    
-                method: 'POST'
-            })
+            let audioBlob = await fetch('http://localhost:8080/test', {
+                    mode: 'cors',    
+                    method: 'POST'
+                })
                 .then(response => response.body)
                 .then(body => {
                     const reader = body.getReader();
                     return reader
                             .read()
-                            .then(result => result);
+                            .then(result => {
+                                let blob = new Blob([result.value], {type: 'audio/mp3'});
+                                return blob;
+                            });
                 })
                 .catch(err => console.log(err));
-            
-                let blob = new Blob([audio.value], {type: 'audio/mp3'});
-                let url = window.URL.createObjectURL(blob);
+                let url = window.URL.createObjectURL(audioBlob);
                 await Audio.Sound.createAsync(
                     url,
-                    {shouldPlay: true}
-                )
+                    {
+                        shouldPlay: true,
+                        downloadFirst: true
+                    }
+                );
                 setValue(true);
             }catch(err){
                 console.log(err);
@@ -36,14 +58,13 @@ function PlayAudio(){
     return (
         <View>
         <Button
-            onPress={handlePress}
+            onPress={(event) => {
+            //   this.handlePlay();
+                handleClick();
+            }}
             title="Play Quack"
             disabled={!value}
         />
-
-        <Text>websocket echo:</Text>
         </View>
     );
 }
-
-export default PlayAudio;
