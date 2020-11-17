@@ -1,18 +1,12 @@
-import React, { Component, PureComponent } from 'react';
-import { StyleSheet, Button, View, SafeAreaView, Text, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { Button, View, Text } from 'react-native';
 import { Audio } from 'expo-av';
 
-class PlayAudio extends Component {
-    constructor(){
-        super();
-        this.state = { 
-            value: true,
-        }
-        this.handlePress = this.handlePress.bind(this);
-    }
+function PlayAudio(){
+    const [value, setValue] = useState(true);
 
-    handlePress = async () => {
-        this.setState({ value: false })
+    const handlePress = async () => {
+        setValue(false);
         try{
             let audio = await fetch('http://localhost:8080/test', {
                 mode: 'cors',    
@@ -33,25 +27,23 @@ class PlayAudio extends Component {
                     url,
                     {shouldPlay: true}
                 )
-                this.setState({ value: true })
+                setValue(true);
             }catch(err){
                 console.log(err);
             }
     }
 
-    render() {
-        return (
-          <View>
-            <Button
-              onPress={this.handlePress}
-              title="Play Quack"
-              disabled={!this.state.value}
-            />
+    return (
+        <View>
+        <Button
+            onPress={handlePress}
+            title="Play Quack"
+            disabled={!value}
+        />
 
-            <Text>websocket echo: {this.state.echo}</Text>
-          </View>
-        );
-    }
+        <Text>websocket echo:</Text>
+        </View>
+    );
 }
 
 export default PlayAudio;
