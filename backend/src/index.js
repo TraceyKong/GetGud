@@ -49,8 +49,8 @@ io.on("connection", (socket) => {
     }
     interval = setInterval(() => getApiAndEmit(socket), 1000);
 
-    socket.on('message', function (msg) {
-        socket.emit('message', msg)
+    socket.on('message', () => {
+        socket.broadcast.emit('message', 'hello')
     })
 
     socket.on("disconnect", () => {

@@ -10,7 +10,8 @@ export default function PlayAudio() {
     const [value, setValue] = useState(true);
     
     useEffect(() => {
-        socket.on('message', () => {
+        socket.on('message', data => {
+            console.log(data);
         })
         socket.addEventListener('message', () => {
             handlePlay();
