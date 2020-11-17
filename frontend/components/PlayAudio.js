@@ -1,20 +1,20 @@
 import React, { Component, PureComponent } from 'react';
 import { StyleSheet, Button, View, SafeAreaView, Text, Alert } from 'react-native';
-// import Sound from 'react-native-sound'
-// import SoundPlayer from 'react-native-sound-player';
 import { Audio } from 'expo-av';
 
 class PlayAudio extends Component {
     constructor(){
         super();
-        this.state = { value: true }
+        this.state = { 
+            value: true,
+        }
         this.handlePress = this.handlePress.bind(this);
     }
 
     handlePress = async () => {
         this.setState({ value: false })
         try{
-            let audio = await fetch('http://localhost:5000/test', {
+            let audio = await fetch('http://localhost:8080/test', {
                 mode: 'cors',    
                 method: 'POST'
             })
@@ -40,13 +40,17 @@ class PlayAudio extends Component {
     }
 
     render() {
-        return(
-            <Button 
-                onPress={this.handlePress}
-                title="Play Quack"
-                disabled={!this.state.value}
+        return (
+          <View>
+            <Button
+              onPress={this.handlePress}
+              title="Play Quack"
+              disabled={!this.state.value}
             />
-        )
+
+            <Text>websocket echo: {this.state.echo}</Text>
+          </View>
+        );
     }
 }
 

@@ -16,10 +16,12 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-39.0.4.tar.gz",
     "react-native-sound": "^0.11.0",
     "react-native-sound-player": "^0.10.5",
-    "react-native-web": "~0.13.12"
+    "react-native-web": "~0.13.12",
+    "socket.io-client": "^3.0.1"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0"
   },
-  "private": true
+  "private": true,
+  "proxy": "http://127.0.0.1:8080"
 }
