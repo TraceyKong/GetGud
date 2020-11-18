@@ -23,4 +23,4 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-get-gud-key.json
+serviceAccount.json
