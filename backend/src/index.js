@@ -3,6 +3,7 @@ const express = require('express');
 const {Datastore} = require('@google-cloud/datastore');
 const {Storage} = require('@google-cloud/storage');
 const cors = require('cors');
+const fs = require('fs');
 
 // Database
 const db = new Datastore({
@@ -27,11 +28,12 @@ app.post('/test', async (req, res) => {
         const remoteFile = bucket.file(process.env.GCP_AUDIO_NAME);
         const remoteReadStream = remoteFile.createReadStream();
         remoteReadStream.pipe(res);
+        
 })
 
-app.get('/', (req, res) => {
-    res.send({response: "I am alive"}).status(200);
-})
+// app.get('/', (req, res) => {
+//     res.send({response: "I am alive"}).status(200);
+// })
 
 const server = require('http').createServer(app);
 const io = require('socket.io')(server, {
@@ -40,22 +42,25 @@ const io = require('socket.io')(server, {
         methods: ['GET', 'POST']
     }
 }); // < Interesting!
+const ss = require('socket.io-stream');
 
 io.on("connection", (socket) => {
-    let interval;
     console.log("New client connected");
-    if (interval) {
-        clearInterval(interval);
-    }
-    interval = setInterval(() => getApiAndEmit(socket), 1000);
+
+    ss(socket).on('message', () => {
+        const remoteFile = bucket.file(process.env.GCP_AUDIO_NAME);
+        const remoteReadStream = remoteFile.createReadStream();
+        let outgoingStream = ss.createStream();
+        ss(socket).emit('message', outgoingStream);
+        remoteReadStream.pipe(outgoingStream);
+    })
 
     socket.on('message', () => {
-        socket.broadcast.emit('message', 'hello')
+        socket.emit('message');
     })
 
     socket.on("disconnect", () => {
         console.log("Client disconnected");
-        clearInterval(interval);
     });
 });
 
@@ -74,6 +79,9 @@ const buttonSuccessful = socket => {
       })
 }
 
-
+const getAudioStream = () => {
+    const remoteFile = bucket.file(process.env.GCP_AUDIO_NAME);
+    return remoteFile.createReadStream();
+}
 
 // app.listen(5000, () => console.log('App listening on port 5000.'));
