@@ -35,18 +35,25 @@ const io = require('socket.io')(server, {
         methods: ['GET', 'POST']
     }
 });
-const ss = require('socket.io-stream');
 
 io.on("connection", (socket) => {
     console.log("New client connected");
 
-    ss(socket).on('message', () => {
+    socket.on('sendAudio', () => {
         const remoteFile = bucket.file(process.env.GCP_AUDIO_NAME);
         const remoteReadStream = remoteFile.createReadStream();
-        let outgoingStream = ss.createStream();
-        let username = 'test';
-        ss(socket).emit('message', outgoingStream);
-        remoteReadStream.pipe(outgoingStream);
+        
+        remoteReadStream.on('open', () => {
+            console.log('loading audio');
+        });
+        
+        remoteReadStream.on('data', chunk => {
+            socket.broadcast.emit('receiveAudio', chunk);
+        });
+        
+        remoteReadStream.on('end', () => {
+            socket.broadcast.emit('end');
+        })
     })
 
     socket.on("disconnect", () => {
