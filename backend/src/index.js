@@ -1,25 +1,65 @@
+require('dotenv').config();
 const express = require('express');
-const admin = require('firebase-admin');
-const serviceAccount = require('../get-gud-key.json');
+const {Datastore} = require('@google-cloud/datastore');
+const {Storage} = require('@google-cloud/storage');
 const cors = require('cors');
 
-// Connect to firebase
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://get-gud-fee28.firebaseio.com"
+// Database
+const db = new Datastore({
+    projectId: process.env.GCP_PROJECT_ID,
+    keyFilename: process.env.GCP_KEY_FILENAME
 });
 
-// Database
-const db = admin.firestore();
+// Cloud Storage
+const storage = new Storage({
+    projectId: process.env.GCP_PROJECT_ID,
+    keyFilename: process.env.GCP_KEY_FILENAME
+});
+const bucket = storage.bucket(process.env.GCP_BUCKET_NAME);
 
 // Express app
 const app = express();
 
-app.use(express.json());    // Body parser
+app.use(express.json());
 app.use(cors());
 
-app.post('/test', async (req, res) => {
-    return res.json("Hello, world!");
+app.get('/', (req, res) => {
+    res.send({response: "I am alive"}).status(200);
 })
 
-app.listen(5000, () => console.log('App listening on port 5000.'));
+// Websocket
+const server = require('http').createServer(app);
+const io = require('socket.io')(server, {
+    cors: {
+        origin: true,
+        methods: ['GET', 'POST']
+    }
+});
+
+io.on("connection", (socket) => {
+    console.log("New client connected");
+
+    socket.on('sendAudio', () => {
+        const remoteFile = bucket.file(process.env.GCP_AUDIO_NAME);
+        const remoteReadStream = remoteFile.createReadStream();
+        
+        remoteReadStream.on('open', () => {
+            console.log('loading audio');
+        });
+        
+        remoteReadStream.on('data', chunk => {
+            socket.broadcast.emit('receiveAudio', chunk);
+        });
+        
+        remoteReadStream.on('end', () => {
+            socket.broadcast.emit('end');
+        })
+    })
+
+    socket.on("disconnect", () => {
+        console.log("Client disconnected");
+    });
+});
+
+server.listen(process.env.PORT, () => console.log(`Listening on port ${process.env.PORT}`));
+
