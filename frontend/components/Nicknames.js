@@ -3,22 +3,22 @@ import { Button, View } from 'react-native';
 
 export default function Nicknames() {
 
-    const [name, setName] = useState('');
+    const [name2, setName2] = useState('');
 
     const handleChange = (event) => {
-        setName(event.target.value);
+        setName2(event.target.value);
     }
 
     const handleSubmit = (event) => {
-        console.log(name);
+        console.log(name2);
     }
 
     return (
         <View>
-            <form onSubmit = {() => handleSubmit}>
+            <form onSubmit = {handleSubmit}>
                 <label>
-                    Yo yo yo, enter something below!
-                    <textarea onChange = {() => handleChange}></textarea>
+                    Your name is currently {name2} . If you do not like it, enter a new name here:
+                    <textarea style = {{position: "relative", top: "5px"}} name = 'name' onChange = {handleChange}></textarea>
                 </label>
                 <input type="submit" value="Submit" />
             </form>
