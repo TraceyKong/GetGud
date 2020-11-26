@@ -21,10 +21,10 @@ const bucket = storage.bucket(process.env.GCP_BUCKET_NAME);
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(cors()); 
 
 app.get('/', (req, res) => {
-    res.send({response: "I am alive"}).status(200);
+    console.log(req.socket.address());
 })
 
 // Websocket
@@ -42,7 +42,7 @@ io.on("connection", (socket) => {
     socket.on('sendAudio', () => {
         const remoteFile = bucket.file(process.env.GCP_AUDIO_NAME);
         const remoteReadStream = remoteFile.createReadStream();
-        
+
         remoteReadStream.on('open', () => {
             console.log('loading audio');
         });
