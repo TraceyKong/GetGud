@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, View } from 'react-native';
+import { Button, View, TextInput, Text } from 'react-native';
 
 export default function Nicknames() {
 
@@ -15,14 +15,21 @@ export default function Nicknames() {
     }
 
     return (
-        <View>
-            <form onSubmit = {handleSubmit}>
-                <label>
-                    Your name is currently {name2} . If you do not like it, enter a new name here:
-                    <textarea style = {{position: "relative", top: "5px"}} name = 'name' onChange = {handleChange}></textarea>
-                </label>
-                <input type="submit" value="Submit" />
-            </form>
+        <View style={{ width: 300 }}>
+            <Text>Your name is currently {''}
+                <Text style={{ fontWeight: 'bold' }}>{name2}</Text>
+            </Text>
+            <Text>If you do not like it, enter a new name here:</Text>
+            
+            <TextInput
+                style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+                onChangeText={text => setName2(text)}
+                value={name2} 
+            />
+            <Button
+                title='Submit'
+                onPress={handleSubmit}
+            />
         </View>
     );
 }

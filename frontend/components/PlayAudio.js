@@ -4,8 +4,10 @@ import io from "socket.io-client";
 import { btoa } from 'js-base64';
 import { Audio } from 'expo-av';
 
+const LOCALHOST = '192.168.1.154'
+
 export default function PlayAudio() {
-    const [socket] = useState(() => io("http://192.168.1.154:8080"));
+    const [socket] = useState(() => io(`http://${LOCALHOST}:8080`));
     useEffect(() => {
         let chunks = [];
 
