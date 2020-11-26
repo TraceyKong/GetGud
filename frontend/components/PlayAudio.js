@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react';
-import { Button, View } from 'react-native';
-import socketIOClient from "socket.io-client";
+import React, { useState, useEffect } from 'react';
+import { Button, View, Text } from 'react-native';
+import io from "socket.io-client";
+import { btoa } from 'js-base64';
+import { Audio } from 'expo-av';
 
-const ENDPOINT = "http://localhost:8080";
-const socket = socketIOClient(ENDPOINT);
+const LOCALHOST = '192.168.1.154'
 
 export default function PlayAudio() {
-    
+    const [socket] = useState(() => io(`http://${LOCALHOST}:8080`));
     useEffect(() => {
         let chunks = [];
 
@@ -16,8 +17,8 @@ export default function PlayAudio() {
         });
 
         socket.on('end', () => {
-            let audioBlob = new Blob([Uint8Array.from(chunks)], { type: 'audio/mp3'});
-            playAudio(audioBlob);
+            let audioArray = Uint8Array.from(chunks);
+            playAudio(audioArray);
             chunks = [];
         })
     }, []);
@@ -26,11 +27,16 @@ export default function PlayAudio() {
         socket.emit('sendAudio');
     }
 
-    const playAudio = async blob => {
-        let url = window.URL.createObjectURL(blob);
-        window.audio = new Audio();
-        window.audio.src = url;
-        window.audio.play();
+    const playAudio = async arr => {
+        let binstr = Array.prototype.map.call(arr, ch => {
+            return String.fromCharCode(ch);
+        }).join('');
+        let base64arr = btoa(binstr);
+        let uri = 'data:audio/mp3;base64,' + base64arr;
+        await Audio.Sound.createAsync(
+            { uri: uri },
+            { shouldPlay: true }
+        )
     }
 
     return (
