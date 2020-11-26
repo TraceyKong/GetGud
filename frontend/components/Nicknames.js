@@ -10,6 +10,7 @@ export default function Nicknames() {
     }
 
     const handleSubmit = (event) => {
+        event.preventDefault();
         console.log(name2);
     }
 
