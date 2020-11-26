@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import PlayAudio from "./components/PlayAudio";
+import Nicknames from "./components/Nicknames";
 
 export default function App() {
 
@@ -9,6 +10,7 @@ export default function App() {
     <View style={styles.container}>
       <StatusBar style="auto" />
       <PlayAudio />
+      <Nicknames />
     </View>
   );
 }
