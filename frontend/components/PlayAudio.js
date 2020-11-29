@@ -3,12 +3,23 @@ import { Button, View, Text } from 'react-native';
 import io from "socket.io-client";
 import { btoa } from 'js-base64';
 import { Audio } from 'expo-av';
+import Cookies from 'universal-cookie';
 
-const LOCALHOST = '192.168.1.154'
+const cookies = new Cookies();
+
+const webSocketHost = location.protocol === 'https:' ? 'wss://' : 'ws://';
+const externalIp = cookies.get('app-ip');
+const webSocketUri =  webSocketHost + externalIp + ':65080';
 
 export default function PlayAudio() {
-    const [socket] = useState(() => io(`http://${LOCALHOST}:8080`));
+    const [socket] = useState(() => io(webSocketUri), {
+        transports: ['websocket']
+    });
+
+    const [message, setMessage] = useState('test');
+
     useEffect(() => {
+        setMessage(JSON.stringify(cookies.getAll()));
         let chunks = [];
 
         socket.on('receiveAudio', data => {
@@ -45,6 +56,7 @@ export default function PlayAudio() {
                 onPress={handleClick}
                 title="Play Quack"
             />
+            <Text>{message}</Text>
         </View>
     );
 }
