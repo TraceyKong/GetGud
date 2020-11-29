@@ -27,6 +27,20 @@ app.get('/', (req, res) => {
     console.log(req.socket.address());
 })
 
+app.post('/savingNickname', async(req,res) => {
+    console.log('Hello I am cheese');
+
+    const olives = await db.collection('visit').add({
+        name: 'Tokyo',
+        country: 'Japan'
+    });
+
+    // Saves the entity
+    console.log(`Saved ${olives}`);
+
+    return res.json(olives);
+})
+
 // Websocket
 const server = require('http').createServer(app);
 const io = require('socket.io')(server, {
