@@ -45,23 +45,6 @@ app.listen(process.env.PORT || 8080, () => {
     console.log('App listening on port 8080')
 });
 
-function getExternalIp (cb) {
-    var options = {
-        url: METADATA_NETWORK_INTERFACE_URL,
-        headers: {
-            'Metadata-Flavor': 'Google'
-        }
-    };
-  
-    request(options, function (err, resp, body) {
-        if (err || resp.statusCode !== 200) {
-            console.log('Error while talking to metadata server, assuming localhost');
-            return cb('localhost');
-        }
-        return cb(body);
-    });
-}
-
 // Websocket
 const socket_app = express();
 const server1 = require('http').createServer(socket_app);
