@@ -30,15 +30,26 @@ app.get('/', (req, res) => {
 app.post('/savingNickname', async(req,res) => {
     console.log('Hello I am cheese');
 
-    const olives = await db.collection('visit').add({
-        name: 'Tokyo',
-        country: 'Japan'
-    });
+    const kind = 'visit';
+
+    const taskKey = db.key(kind);
+
+    const task = {
+        key: taskKey,
+        data: {
+            data: 'Ur mom is kinda cute',
+        },
+    };
 
     // Saves the entity
-    console.log(`Saved ${olives}`);
+    await db.save(task);
 
-    return res.json(olives);
+    // Saves the entity
+    console.log(`Saved ${task}`);
+
+    return res.json(task);
+
+    //http://localhost:8080/savingNickname
 })
 
 // Websocket
