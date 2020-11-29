@@ -20,6 +20,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// Sends ip address to client
 app.use('/', (req, res, next) => {
     let options = {
         url: METADATA_NETWORK_INTERFACE_URL,
@@ -39,6 +40,8 @@ app.use('/', (req, res, next) => {
     res.cookie('app-ip', address);
     next();
 })
+
+// Sends web app to client
 app.use(express.static(__dirname + '/views'));
 
 app.listen(process.env.PORT || 8080, () => {

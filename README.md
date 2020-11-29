@@ -10,3 +10,19 @@
 
 We are creating a Get Gud App that shows a big button that plays an audio track says"Get Gud.
 Other users can click on it and you can also hear the audio play.
+
+## Build
+
+- To build the react app, run 
+    ```sh
+    $ expo build:<platform>
+    ```
+
+## Deployment
+
+- After build, paste content from frontend/web-build to backend/views
+- Install [GCloud SDK](https://cloud.google.com/sdk/docs/install)
+- Deploy by running
+    ```sh
+    $ gcloud app deploy
+    ```

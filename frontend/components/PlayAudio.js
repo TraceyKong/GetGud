@@ -7,6 +7,7 @@ import Cookies from 'universal-cookie';
 
 const cookies = new Cookies();
 
+// Fetching ip address from instance
 const webSocketHost = location.protocol === 'https:' ? 'wss://' : 'ws://';
 const externalIp = cookies.get('app-ip');
 const webSocketUri =  webSocketHost + externalIp + ':65080';
