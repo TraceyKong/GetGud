@@ -18,7 +18,7 @@ app.use(cors());
 
 // Sends ip address to client
 app.use('/', (req, res, next) => {    
-    res.cookie('app-ip', '34.73.146.243');
+    res.cookie('app-ip', '');
     next();
 });
 
