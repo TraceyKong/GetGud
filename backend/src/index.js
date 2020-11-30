@@ -53,7 +53,7 @@ app.post('/savingNickname', async(req,res) => {
 })
 
 app.post('/updateNickname', authenticateUser, async(req,res) => {
-    return res.json('Winner winner chicken dinner');
+    return res.json(req.user);
 })
 
 async function authenticateUser(req,res,next) {
@@ -71,7 +71,7 @@ async function authenticateUser(req,res,next) {
 
     console.log(req.body.data);
 
-    const key = db.key(['visit', req.body.data.toString()]);
+    const key = db.key(['visit', Number(req.body.data)]);
 
     // db.get(key, (err,entity) => {
     //     if(err) {
@@ -84,11 +84,20 @@ async function authenticateUser(req,res,next) {
     // })
 
     try {
-        const [response] = await db.get(key);
+        // const response = await db.get(key).then((data) => {
+        //     req.user = data[0];
+        //     return (data[0]);
+        // });
+
+        const response = await db.get(key);
 
         console.log(response);
 
-        return res.json(response.json());
+        // return res.json({ user: response });
+
+        req.user = response;
+
+        next();
     }
     catch(err) {
         return res.json(err);

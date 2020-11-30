@@ -59,9 +59,10 @@ export default function Nicknames() {
                 body: JSON.stringify({
                     data: cookies.get('UuID')
                 }) // body data type must match "Content-Type" header
-            });
+            }).then(res => res.json()).then(data => console.log(data));
 
-            console.log(response.json());
+            //response = response.json();
+            //console.log(response.json().then(result => result.data));
         }
 
         console.log(name2);
