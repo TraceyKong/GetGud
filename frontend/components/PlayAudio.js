@@ -4,7 +4,7 @@ import io from "socket.io-client";
 import { btoa } from 'js-base64';
 import { Audio } from 'expo-av';
 
-const LOCALHOST = '192.168.1.154'
+const LOCALHOST = '192.168.1.78'
 
 export default function PlayAudio() {
     const [socket] = useState(() => io(`http://${LOCALHOST}:8080`));

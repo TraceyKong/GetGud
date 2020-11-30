@@ -37,7 +37,7 @@ app.post('/savingNickname', async(req,res) => {
     const task = {
         key: taskKey,
         data: {
-            data: 'Ur mom is kinda cute',
+            data: req.body.data, //'Ur mom is kinda cute',
         },
     };
 
@@ -51,6 +51,49 @@ app.post('/savingNickname', async(req,res) => {
 
     //http://localhost:8080/savingNickname
 })
+
+app.post('/updateNickname', authenticateUser, async(req,res) => {
+    return res.json('Winner winner chicken dinner');
+})
+
+async function authenticateUser(req,res,next) {
+    // const query = db.createQuery('visit').filter('Key.id', '=', req.body.data);
+    // const tasks = await db.runQuery(query);
+    // console.log('IDs:');
+    // console.log(tasks);
+    // // tasks.forEach(task => { 
+    // //     console.log(task);
+
+    // //     if(task == req.body.data) {
+    // //         next();
+    // //     }
+    // // });
+
+    console.log(req.body.data);
+
+    const key = db.key(['visit', req.body.data.toString()]);
+
+    // db.get(key, (err,entity) => {
+    //     if(err) {
+    //         return res.json(err);
+    //     }
+    //     else {
+    //         console.log(entity);
+    //         return res.json(entity);
+    //     }
+    // })
+
+    try {
+        const [response] = await db.get(key);
+
+        console.log(response);
+
+        return res.json(response.json());
+    }
+    catch(err) {
+        return res.json(err);
+    }
+}
 
 // Websocket
 const server = require('http').createServer(app);
@@ -87,4 +130,5 @@ io.on("connection", (socket) => {
 });
 
 server.listen(process.env.PORT, () => console.log(`Listening on port ${process.env.PORT}`));
+module.exports = app;
 
