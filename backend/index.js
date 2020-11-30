@@ -2,10 +2,6 @@ const express = require('express');
 const {Datastore} = require('@google-cloud/datastore');
 const {Storage} = require('@google-cloud/storage');
 const cors = require('cors');
-const request = require('request');
-
-const METADATA_NETWORK_INTERFACE_URL = 'http://metadata/computeMetadata/v1/' +
-    '/instance/network-interfaces/0/access-configs/0/external-ip';
 
 // Database
 const db = new Datastore();
@@ -21,25 +17,10 @@ app.use(express.json());
 app.use(cors());
 
 // Sends ip address to client
-app.use('/', (req, res, next) => {
-    let options = {
-        url: METADATA_NETWORK_INTERFACE_URL,
-        headers: {
-            'Metadata-Flavor': 'Google'
-        }
-    };
-
-    let address = request(options, (err, resp, body) => {
-        if (err || resp.statusCode !== 200) {
-            console.log('Error while talking to metadata server, assuming localhost');
-            return 'localhost';
-        }
-        return body;
-    });
-    
-    res.cookie('app-ip', address);
+app.use('/', (req, res, next) => {    
+    res.cookie('app-ip', '34.73.146.243');
     next();
-})
+});
 
 // Sends web app to client
 app.use(express.static(__dirname + '/views'));
