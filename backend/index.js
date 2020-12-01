@@ -13,27 +13,27 @@ const bucket = storage.bucket('robust-primacy-294723.appspot.com');
 // Express app
 const app = express();
 
-app.use(express.json());
 app.use(cors());
+app.use(express.json());
 
 // Sends ip address to client
-app.use('/', (req, res, next) => {    
-    res.cookie('app-ip', '');
-    next();
-});
+// app.use('/', (req, res, next) => {    
+//     res.cookie('app-ip', 'robust-primacy-294723.ue.r.appspot.com');
+//     next();
+// });
 
 // Sends web app to client
 app.use(express.static(__dirname + '/views'));
 
-app.listen(process.env.PORT || 8080, () => {
-    console.log('App listening on port 8080')
-});
+// Sends domain name to client
+app.get('/getUri', (req, res) => {
+    res.json({ip: 'robust-primacy-294723.ue.r.appspot.com'});
+})
 
 // Websocket
-const socket_app = express();
-const server1 = require('http').createServer(socket_app);
-const io = require('socket.io')(server1, {
-    cors: {
+const server = require('http').createServer(app);
+const io = require('socket.io')(server, {
+    cors:{
         origin: true,
         methods: ['GET', 'POST']
     }
@@ -64,7 +64,7 @@ io.on("connection", (socket) => {
     });
 });
 
-server1.listen(65080, () => {
-    console.log('App listening on port %s', server1.address().port)
+server.listen(8080, () => {
+    console.log('App listening on port %s', server.address().port)
 });
 
