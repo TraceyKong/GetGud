@@ -52,6 +52,16 @@ app.post('/savingNickname', async(req,res) => {
     //http://localhost:8080/savingNickname
 })
 
+app.post('/deleteNickname', authenticateUser, async(req,res) => {
+    const key = db.key(['visit', Number(req.body.data)]); // gets the key of the current user using their Unique ID
+
+    const response = await db.delete(key); // deletes the record in the db with the same key
+
+    req.user = response;
+
+    return res.json(req.user);
+})
+
 app.post('/updateNickname', authenticateUser, async(req,res) => {
     const key = db.key(['visit', Number(req.body.data)]); // gets the key of the current user using their Unique ID
 
@@ -67,6 +77,8 @@ app.post('/updateNickname', authenticateUser, async(req,res) => {
     };
 
     const response = await db.save(task); // Updates the record in the db with the same key with the info in 'task'
+
+    req.user = response;
 
     return res.json(req.user);
 })
