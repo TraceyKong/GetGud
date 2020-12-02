@@ -1,51 +1,58 @@
 import React, { useEffect, useState } from 'react';
 import { Button, View, TextInput, Text } from 'react-native';
-import Cookies from 'universal-cookie';
-
-const cookies = new Cookies();
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { postData } from './utils';
 
 export default function Nicknames() {
 
     const [name2, setName2] = useState('');
     const [hasNickname, setHasNickname] = useState(false);
+    const [nickname, setNickname] = useState('');
+    const [uuid_val, setUuid] = useState('');
+    const [errMessage, setErr] = useState('');
 
     const handleChange = (event) => {
         setName2(event.target.value);
-    }
-
-    // Example POST method implementation:
-    async function postData(url = '', data = {}) {
-        // Default options are marked with *
-        const response = await fetch(url, {
-            method: 'POST', // *GET, POST, PUT, DELETE, etc.
-            mode: 'cors', // no-cors, *cors, same-origin
-            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-            credentials: 'same-origin', // include, *same-origin, omit
-            headers: {
-                'Content-Type': 'application/json'
-                // 'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            redirect: 'follow', // manual, *follow, error
-            referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-            body: JSON.stringify(data) // body data type must match "Content-Type" header
-        });
-        return response.json(data); // parses JSON response into native JavaScript objects
     }
 
     const handleSubmit = async(event) => {
         event.preventDefault();
 
         if(!hasNickname) {
-            postData('http://localhost:8080/savingNickname', { data: name2 })
-            .then(data => {
-                console.log(data); // JSON data parsed by `data.json()` call
-                cookies.set('UuID', data.key.id);
-                console.log(cookies.get('UuID'));
+            // postData({ data: name2 })
+            //     .then(data => data.json()
+                    // console.log(data); // JSON data parsed by `data.json()` call
+                    // try{
+                    //     AsyncStorage.setItem('UuID', data.key.id);
+                    // }catch(err){
+                    //     console.log(err);
+                    // }
+                    // console.log(AsyncStorage.getItem('UuID'));
+                    // setHasNickname(true);
+                // )
+                // .then(res => {
+                //     try{
+                //         AsyncStorage.setItem('UuID', res.key.id);
+                //     }catch(err){
+                //         console.log(err);
+                //     }
+                // })
+                // .catch(err => {
+                //     console.log(err);
+                // });
+            try{
+                const response = await postData({ data: name2 });
+                const data = await response.json();
+                setErr(JSON.stringify(data));
+                AsyncStorage.setItem('UuID', data.key.id);
                 setHasNickname(true);
-            });
+            }catch(err){
+                // setErr(err.toString());
+            }
         }
         else {
-            const response = await fetch('http://localhost:8080/updateNickname', {
+            const stored_uuid = await AsyncStorage.getItem('UuID');
+            const response = await fetch('http://192.168.1.179:8080/updateNickname', {
                 method: 'POST', // *GET, POST, PUT, DELETE, etc.
                 mode: 'cors', // no-cors, *cors, same-origin
                 cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -57,8 +64,8 @@ export default function Nicknames() {
                 redirect: 'follow', // manual, *follow, error
                 referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
                 body: JSON.stringify({
-                    data: cookies.get('UuID'),
-                    newName: name2
+                    data: stored_uuid,
+                    newName: nickname
                 }) // body data type must match "Content-Type" header
             }).then(res => res.json()).then(data => console.log(data[0].data));
 
@@ -66,13 +73,38 @@ export default function Nicknames() {
             //console.log(response.json().then(result => result.data));
         }
 
+        // Sets nickname into AsyncStorage
         console.log(name2);
+        try{
+            AsyncStorage.setItem('nickname', name2)
+        }catch(err){
+            console.log(err)
+        }
+        getData();
     }
+
+    const getData = async () => {
+        try {
+          const value = await AsyncStorage.getItem('nickname');
+          const the_uuid = await AsyncStorage.getItem('UuID');
+          if(value !== null) {
+              setNickname(value)
+              setUuid(the_uuid)
+            // value previously stored
+          }
+        } catch(e) {
+            console.log(e)
+          // error reading value
+        }
+      }   
+      
+    getData();
 
     return (
         <View style={{ width: 300 }}>
+            <Text>The UuID is: {uuid_val}</Text>
             <Text>Your name is currently {''}
-                <Text style={{ fontWeight: 'bold' }}>{name2}</Text>
+                <Text style={{ fontWeight: 'bold' }}>{nickname}</Text>
             </Text>
             <Text>If you do not like it, enter a new name here:</Text>
             
@@ -85,6 +117,7 @@ export default function Nicknames() {
                 title='Submit'
                 onPress={handleSubmit}
             />
+            <Text>{errMessage}</Text>
         </View>
     );
 }

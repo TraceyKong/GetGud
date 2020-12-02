@@ -1,10 +1,14 @@
+require('dotenv').config();
 const express = require('express');
 const {Datastore} = require('@google-cloud/datastore');
 const {Storage} = require('@google-cloud/storage');
 const cors = require('cors');
 
 // Database
-const db = new Datastore();
+const db = new Datastore({
+    projectId: process.env.GCP_PROJECT_ID,
+    keyFilename: process.env.GCP_KEY_FILENAME
+});
 
 // Cloud Storage
 const storage = new Storage();
@@ -32,25 +36,22 @@ app.get('/getUri', (req, res) => {
 
 app.post('/savingNickname', async(req,res) => {
     // console.log('Hello I am cheese');
-
-    const kind = 'visit';
-
-    const taskKey = db.key(kind);
-
     const task = {
-        key: taskKey,
+        key: db.key('visit'),
         data: {
             data: req.body.data, //'Ur mom is kinda cute',
         },
     };
 
+    try{
     // Saves the entity
-    await db.save(task);
-
+        await db.save(task);
     // Saves the entity
     // console.log(`Saved ${task}`);
-
-    return res.json(task);
+        return res.json(task);
+    }catch(err){
+        res.status(400).send(err);
+    }
 
     //http://localhost:8080/savingNickname
 })
@@ -156,12 +157,7 @@ io.on("connection", (socket) => {
     });
 });
 
-<<<<<<< HEAD:backend/index.js
 server.listen(8080, () => {
     console.log('App listening on port %s', server.address().port)
 });
-=======
-server.listen(process.env.PORT, () => console.log(`Listening on port ${process.env.PORT}`));
-module.exports = app;
->>>>>>> origin/Saving-Username:backend/src/index.js
 

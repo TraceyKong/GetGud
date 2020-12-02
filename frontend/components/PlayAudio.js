@@ -4,15 +4,11 @@ import io from "socket.io-client";
 import { btoa } from 'js-base64';
 import { Audio } from 'expo-av';
 
-<<<<<<< HEAD
 // Fetch url from server
 // const fetchUri = async () => {
 //     await fetch('/getUri')
 //         .then(result => { return result.ip })
 // }
-=======
-const LOCALHOST = '192.168.1.78'
->>>>>>> origin/Saving-Username
 
 export default function PlayAudio() {
 
