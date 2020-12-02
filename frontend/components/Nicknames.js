@@ -57,9 +57,10 @@ export default function Nicknames() {
                 redirect: 'follow', // manual, *follow, error
                 referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
                 body: JSON.stringify({
-                    data: cookies.get('UuID')
+                    data: cookies.get('UuID'),
+                    newName: name2
                 }) // body data type must match "Content-Type" header
-            }).then(res => res.json()).then(data => console.log(data));
+            }).then(res => res.json()).then(data => console.log(data[0].data));
 
             //response = response.json();
             //console.log(response.json().then(result => result.data));

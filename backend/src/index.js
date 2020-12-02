@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
 })
 
 app.post('/savingNickname', async(req,res) => {
-    console.log('Hello I am cheese');
+    // console.log('Hello I am cheese');
 
     const kind = 'visit';
 
@@ -45,7 +45,7 @@ app.post('/savingNickname', async(req,res) => {
     await db.save(task);
 
     // Saves the entity
-    console.log(`Saved ${task}`);
+    // console.log(`Saved ${task}`);
 
     return res.json(task);
 
@@ -53,6 +53,21 @@ app.post('/savingNickname', async(req,res) => {
 })
 
 app.post('/updateNickname', authenticateUser, async(req,res) => {
+    const key = db.key(['visit', Number(req.body.data)]); // gets the key of the current user using their Unique ID
+
+    // console.log('----------------');
+    // console.log(req.body.data);
+    // console.log('----------------');
+
+    const task = { // Creates object using key and updated username
+        key: key,
+        data: {
+            data: req.body.newName, //'Ur mom is kinda cute',
+        },
+    };
+
+    const response = await db.save(task); // Updates the record in the db with the same key with the info in 'task'
+
     return res.json(req.user);
 })
 
@@ -69,7 +84,7 @@ async function authenticateUser(req,res,next) {
     // //     }
     // // });
 
-    console.log(req.body.data);
+    //console.log(req.body.data);
 
     const key = db.key(['visit', Number(req.body.data)]);
 
@@ -91,7 +106,7 @@ async function authenticateUser(req,res,next) {
 
         const response = await db.get(key);
 
-        console.log(response);
+        //console.log(response.json().data[0].data);
 
         // return res.json({ user: response });
 
