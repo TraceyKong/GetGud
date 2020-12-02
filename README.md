@@ -8,5 +8,5 @@
 - [Yash Mahtani](https://github.com/gasperjw1)
 - [Winson Yu](https://github.com/winson65)
 
-We are creating a Get Gud App that shows a big button that plays an audio track says"Get Gud.
+We are creating a Get Gud App that shows a big button that plays an audio track says"Get Gud".
 Other users can click on it and you can also hear the audio play.
