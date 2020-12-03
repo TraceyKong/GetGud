@@ -4,11 +4,21 @@ import io from "socket.io-client";
 import { btoa } from 'js-base64';
 import { Audio } from 'expo-av';
 
-const LOCALHOST = '192.168.1.154'
+// Fetch url from server
+// const fetchUri = async () => {
+//     await fetch('/getUri')
+//         .then(result => { return result.ip })
+// }
 
 export default function PlayAudio() {
-    const [socket] = useState(() => io(`http://${LOCALHOST}:8080`));
+
+    // For web version, url is fetched by fetchUri()
+    const [socket] = useState(() => io('https://robust-primacy-294723.ue.r.appspot.com/'), {
+        transports: ['websocket']
+    });
+
     useEffect(() => {
+
         let chunks = [];
 
         socket.on('receiveAudio', data => {

@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.13.2",
     "expo": "~39.0.2",
     "expo-av": "~8.6.0",
     "expo-status-bar": "~1.0.2",
@@ -22,5 +23,5 @@
     "@babel/core": "~7.9.0"
   },
   "private": true,
-  "proxy": "http://127.0.0.1:8080"
+  "proxy": "http://localhost:8080"
 }

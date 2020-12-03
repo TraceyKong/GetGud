@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "frontend",
+    "name": "Get Gud",
     "slug": "frontend",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -17,10 +17,13 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "io.ios.getgud"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "android": {
+      "package": "io.android.getgud"
     }
   }
 }
