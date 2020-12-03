@@ -20,7 +20,7 @@ Other users can click on it and you can also hear the audio play.
 
 ## Deployment
 
-- After build, paste content from frontend/web-build to backend/views
+- After build, paste content from frontend/web-build to backend/build
 - Install [GCloud SDK](https://cloud.google.com/sdk/docs/install)
 - Deploy by running
     ```sh
