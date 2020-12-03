@@ -10,6 +10,20 @@ export default function Nicknames() {
     const [nickname, setNickname] = useState('');
     const [uuid_val, setUuid] = useState('');
 
+    useEffect(async () => {
+        try {
+            const stored_uuid = await AsyncStorage.getItem('UuID');
+            const value = await AsyncStorage.getItem('nickname');
+            if(value != null){
+                setNickname(value);
+                setUuid(stored_uuid);
+                setHasNickname(true);
+            }
+        } catch(err) {
+            console.log(err);
+        }
+    }, [])
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
