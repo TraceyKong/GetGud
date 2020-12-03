@@ -3,6 +3,7 @@ import { Button, View, Text } from 'react-native';
 import io from "socket.io-client";
 import { btoa } from 'js-base64';
 import { Audio } from 'expo-av';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Fetch url from server
 // const fetchUri = async () => {
@@ -13,7 +14,8 @@ import { Audio } from 'expo-av';
 export default function PlayAudio() {
 
     // For web version, url is fetched by fetchUri()
-    const [socket] = useState(() => io('https://robust-primacy-294723.ue.r.appspot.com/'), {
+    const [socket] = useState(() => io('http://localhost:8080/'), {
+    // const [socket] = useState(() => io('https://robust-primacy-294723.ue.r.appspot.com/'), {
         transports: ['websocket']
     });
 
@@ -31,6 +33,11 @@ export default function PlayAudio() {
             playAudio(audioArray);
             chunks = [];
         })
+
+        return async function cleanup() {
+            const stored_uuid = await AsyncStorage.getItem('UuID');
+            socket.emit('remove', stored_uuid);
+        }
     }, []);
 
     const handleClick = () => {

@@ -94,7 +94,7 @@ const io = require('socket.io')(server, {
     }
 });
 
-io.on("connection", (socket) => {
+io.on('connection', (socket) => {
     console.log("New client connected");
 
     socket.on('sendAudio', () => {
@@ -114,9 +114,10 @@ io.on("connection", (socket) => {
         })
     })
 
-    socket.on("disconnect", () => {
+    socket.on('disconnect', () => {
         console.log("Client disconnected");
     });
+
 });
 
 server.listen(8080, () => {
