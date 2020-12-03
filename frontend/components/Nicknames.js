@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, View, TextInput, Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { postData } from './utils';
+import { postData, updateData } from './utils';
 
 export default function Nicknames() {
 
@@ -9,77 +9,34 @@ export default function Nicknames() {
     const [hasNickname, setHasNickname] = useState(false);
     const [nickname, setNickname] = useState('');
     const [uuid_val, setUuid] = useState('');
-    const [errMessage, setErr] = useState('');
 
-    const handleChange = (event) => {
-        setName2(event.target.value);
-    }
-
-    const handleSubmit = async(event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
-        if(!hasNickname) {
-            // postData({ data: name2 })
-            //     .then(data => data.json()
-                    // console.log(data); // JSON data parsed by `data.json()` call
-                    // try{
-                    //     AsyncStorage.setItem('UuID', data.key.id);
-                    // }catch(err){
-                    //     console.log(err);
-                    // }
-                    // console.log(AsyncStorage.getItem('UuID'));
-                    // setHasNickname(true);
-                // )
-                // .then(res => {
-                //     try{
-                //         AsyncStorage.setItem('UuID', res.key.id);
-                //     }catch(err){
-                //         console.log(err);
-                //     }
-                // })
-                // .catch(err => {
-                //     console.log(err);
-                // });
-            try{
+        try {
+            if(!hasNickname) {
                 const response = await postData({ data: name2 });
                 const data = await response.json();
-                setErr(JSON.stringify(data));
-                AsyncStorage.setItem('UuID', data.key.id);
+                await AsyncStorage.setItem('UuID', data.key.id);
                 setHasNickname(true);
-            }catch(err){
-                // setErr(err.toString());
-            }
-        }
-        else {
-            const stored_uuid = await AsyncStorage.getItem('UuID');
-            const response = await fetch('http://192.168.1.179:8080/updateNickname', {
-                method: 'POST', // *GET, POST, PUT, DELETE, etc.
-                mode: 'cors', // no-cors, *cors, same-origin
-                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-                credentials: 'same-origin', // include, *same-origin, omit
-                headers: {
-                    'Content-Type': 'application/json'
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                redirect: 'follow', // manual, *follow, error
-                referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-                body: JSON.stringify({
+                console.log('Nickname saved.')
+            } else {
+                const stored_uuid = await AsyncStorage.getItem('UuID');
+                const newData = {
                     data: stored_uuid,
-                    newName: nickname
-                }) // body data type must match "Content-Type" header
-            }).then(res => res.json()).then(data => console.log(data[0].data));
+                    newName: name2
+                }
+                const response = await updateData(newData);
+                if(response.status == 200) console.log('Nickname updated.');
+                else console.log('Failed to update.')
+            }
 
-            //response = response.json();
-            //console.log(response.json().then(result => result.data));
+            await AsyncStorage.setItem('nickname', name2);
+            setNickname(name2);
+        } catch(err) {
+            console.log(err);
         }
 
-        // Sets nickname into AsyncStorage
-        console.log(name2);
-        try{
-            AsyncStorage.setItem('nickname', name2)
-        }catch(err){
-            console.log(err)
-        }
         getData();
     }
 
@@ -88,7 +45,6 @@ export default function Nicknames() {
           const value = await AsyncStorage.getItem('nickname');
           const the_uuid = await AsyncStorage.getItem('UuID');
           if(value !== null) {
-              setNickname(value)
               setUuid(the_uuid)
             // value previously stored
           }
@@ -96,9 +52,7 @@ export default function Nicknames() {
             console.log(e)
           // error reading value
         }
-      }   
-      
-    getData();
+    }
 
     return (
         <View style={{ width: 300 }}>
@@ -117,7 +71,6 @@ export default function Nicknames() {
                 title='Submit'
                 onPress={handleSubmit}
             />
-            <Text>{errMessage}</Text>
         </View>
     );
 }
