@@ -46,6 +46,15 @@ app.post('/savingNickname', async (req, res) => {
     }
 })
 
+app.post('/deleteNickname', authenticateUser, async (req, res) => {
+    try {
+        await db.delete(req.key); // deletes the record in the db with the same key
+        return res.status(200).send('Deleted.');
+    } catch(err) {
+        return res.status(400).send(err);
+    }
+})
+
 app.post('/updateNickname', authenticateUser, async (req, res) => {
     const task = { // Creates object using key and updated username
         key: req.key,
@@ -70,7 +79,6 @@ async function authenticateUser(req, res, next) {
         if(response == undefined) return res.status(400).send('User not found.');
 
         req.key = key;
-        console.log(response);
         next();
     } catch(err) {
         return res.status(400).send(err);
