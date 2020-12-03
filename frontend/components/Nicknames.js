@@ -18,8 +18,9 @@ export default function Nicknames() {
                 const response = await postData({ data: name2 });
                 const data = await response.json();
                 await AsyncStorage.setItem('UuID', data.key.id);
+                setUuid(data.key.id);
                 setHasNickname(true);
-                console.log('Nickname saved.')
+                console.log('Nickname saved:', name2);
             } else {
                 const stored_uuid = await AsyncStorage.getItem('UuID');
                 const newData = {
@@ -27,7 +28,7 @@ export default function Nicknames() {
                     newName: name2
                 }
                 const response = await updateData(newData);
-                if(response.status == 200) console.log('Nickname updated.');
+                if(response.status == 200) console.log('Nickname updated:', name2);
                 else console.log('Failed to update.')
             }
 
@@ -35,22 +36,6 @@ export default function Nicknames() {
             setNickname(name2);
         } catch(err) {
             console.log(err);
-        }
-
-        getData();
-    }
-
-    const getData = async () => {
-        try {
-          const value = await AsyncStorage.getItem('nickname');
-          const the_uuid = await AsyncStorage.getItem('UuID');
-          if(value !== null) {
-              setUuid(the_uuid)
-            // value previously stored
-          }
-        } catch(e) {
-            console.log(e)
-          // error reading value
         }
     }
 
