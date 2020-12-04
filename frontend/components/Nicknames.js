@@ -1,27 +1,34 @@
-import React, { useEffect, useState } from 'react';
-import { Button, View, TextInput, Text } from 'react-native';
+import React, { useEffect, useState } from "react";
+import { View, TextInput, Text } from "react-native";
+import { Button } from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
+import TextField from "@material-ui/core/TextField";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { postData, updateData } from './utils';
 
-export default function Nicknames() {
+import { createStackNavigator, createAppContainer } from "react-navigation";
 
+export default function Nicknames() {
     const [name2, setName2] = useState('');
     const [hasNickname, setHasNickname] = useState(false);
     const [nickname, setNickname] = useState('');
     const [uuid_val, setUuid] = useState('');
 
-    useEffect(async () => {
-        try {
-            const stored_uuid = await AsyncStorage.getItem('UuID');
-            const value = await AsyncStorage.getItem('nickname');
-            if(value != null){
-                setNickname(value);
-                setUuid(stored_uuid);
-                setHasNickname(true);
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                const stored_uuid = await AsyncStorage.getItem('UuID');
+                const value = await AsyncStorage.getItem('nickname');
+                if(value != null){
+                    setNickname(value);
+                    setUuid(stored_uuid);
+                    setHasNickname(true);
+                }
+            } catch(err) {
+                console.log(err);
             }
-        } catch(err) {
-            console.log(err);
         }
+        loadData();
     }, [])
 
     const handleSubmit = async (event) => {
@@ -54,22 +61,52 @@ export default function Nicknames() {
     }
 
     return (
-        <View style={{ width: 300 }}>
-            <Text>The UuID is: {uuid_val}</Text>
-            <Text>Your name is currently {''}
-                <Text style={{ fontWeight: 'bold' }}>{nickname}</Text>
+        <View>
+            {hasNickname ? (
+                    <Text style={{ fontSize: "50px" }}>
+                        Your name is currently {""}
+                        <Text style={{ fontWeight: "bold" }}>{nickname}</Text>
+                    </Text>
+                ) : (
+                    <Text style={{ fontSize: "50px" }}>
+                        Please enter a name
+                    </Text>
+                )
+            }
+
+            <Text style={{ marginBottom: "10px" }}>
+                If you do not like it, enter a new name here:
             </Text>
-            <Text>If you do not like it, enter a new name here:</Text>
-            
-            <TextInput
-                style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-                onChangeText={text => setName2(text)}
-                value={name2} 
-            />
-            <Button
-                title='Submit'
-                onPress={handleSubmit}
-            />
+            <Grid spacing={2} container>
+            <Grid item xs={8}>
+                <TextInput
+                    style={{
+                        width: "100%",
+                        height: 45,
+                        borderColor: "gray",
+                        borderWidth: 1,
+                        borderTopLeftRadius: 20,
+                        borderTopRightRadius: 20,
+                        borderBottomLeftRadius: 20,
+                        borderBottomRightRadius: 20,
+                    }}
+                    onChangeText={(text) => setName2(text)}
+                    value={name2}
+                />
+            </Grid>
+            <Grid item xs={4}>
+                <Button
+                    style={{ fontSize: "20px" }}
+                    fullWidth
+                    type="submit"
+                    variant="outlined"
+                    color="secondary"
+                    onClick={handleSubmit}
+                >
+                    Submit
+                </Button>
+            </Grid>
+            </Grid>
         </View>
     );
 }
