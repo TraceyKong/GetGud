@@ -5,10 +5,7 @@ const {Storage} = require('@google-cloud/storage');
 const cors = require('cors');
 
 // Database
-const db = new Datastore({
-    projectId: process.env.GCP_PROJECT_ID,
-    keyFilename: process.env.GCP_KEY_FILENAME
-});
+const db = new Datastore();
 
 // Cloud Storage
 const storage = new Storage();
@@ -21,7 +18,7 @@ app.use(cors());
 app.use(express.json());
 
 // Sends web app to client
-app.use(express.static(__dirname + '/views'));
+app.use(express.static(__dirname + '/build'));
 
 // Sends domain name to client
 app.get('/getUri', (req, res) => {

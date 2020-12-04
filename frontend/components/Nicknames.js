@@ -2,26 +2,20 @@ import React, { useEffect, useState } from "react";
 import { View, TextInput, Text } from "react-native";
 import { Button } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import TextField from "@material-ui/core/TextField";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { postData, updateData } from './utils';
-
-import { createStackNavigator, createAppContainer } from "react-navigation";
 
 export default function Nicknames() {
     const [name2, setName2] = useState('');
     const [hasNickname, setHasNickname] = useState(false);
     const [nickname, setNickname] = useState('');
-    const [uuid_val, setUuid] = useState('');
 
     useEffect(() => {
         const loadData = async () => {
             try {
-                const stored_uuid = await AsyncStorage.getItem('UuID');
                 const value = await AsyncStorage.getItem('nickname');
                 if(value != null){
                     setNickname(value);
-                    setUuid(stored_uuid);
                     setHasNickname(true);
                 }
             } catch(err) {
@@ -39,9 +33,10 @@ export default function Nicknames() {
                 const response = await postData({ data: name2 });
                 const data = await response.json();
                 await AsyncStorage.setItem('UuID', data.key.id);
-                setUuid(data.key.id);
                 setHasNickname(true);
                 console.log('Nickname saved:', name2);
+                await AsyncStorage.setItem('nickname', name2);
+                setNickname(name2);
             } else {
                 const stored_uuid = await AsyncStorage.getItem('UuID');
                 const newData = {
@@ -53,8 +48,6 @@ export default function Nicknames() {
                 else console.log('Failed to update.')
             }
 
-            await AsyncStorage.setItem('nickname', name2);
-            setNickname(name2);
         } catch(err) {
             console.log(err);
         }

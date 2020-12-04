@@ -1,8 +1,17 @@
+// Fetch url from server
+async function fetchUri() {
+    await fetch('/getUri')
+        .then(response => response.json())
+        .then(result => {return result.ip})
+        .catch(err => console.log(err))
+}
+
 // Sends nickname to server and saves to database
 async function postData(data = {}) {
     // Default options are marked with *
     try {
-        const response = await fetch('http://localhost:8080/savingNickname', {
+        print
+        const response = await fetch('/savingNickname', {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -25,7 +34,7 @@ async function postData(data = {}) {
 async function updateData(data = {}) {
     // Default options are marked with *
     try {
-        const response = await fetch('http://localhost:8080/updateNickname', {
+        const response = await fetch('/updateNickname', {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -45,6 +54,7 @@ async function updateData(data = {}) {
 }
 
 export{
+    fetchUri,
     postData,
     updateData
 }
