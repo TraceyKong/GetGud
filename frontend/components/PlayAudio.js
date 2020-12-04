@@ -1,16 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { View, Text } from "react-native";
 import io from "socket.io-client";
-import { btoa } from "js-base64";
-import { Audio } from "expo-av";
+import { btoa } from 'js-base64';
+import { Audio } from 'expo-av';
 import { Button } from "@material-ui/core";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const LOCALHOST = "192.168.0.9";
+// Fetch url from server
+// const fetchUri = async () => {
+//     await fetch('/getUri')
+//         .then(result => { return result.ip })
+// }
 
 export default function PlayAudio() {
-  const [socket] = useState(() => io(`http://${LOCALHOST}:8080`));
-  useEffect(() => {
-    let chunks = [];
+
+    // For web version, url is fetched by fetchUri()
+    const [socket] = useState(() => io('http://192.168.1.154:8080/'), {
+    // const [socket] = useState(() => io('https://robust-primacy-294723.ue.r.appspot.com/'), {
+        transports: ['websocket']
+    });
+
+    useEffect(() => {
+
+        let chunks = [];
 
     socket.on("receiveAudio", (data) => {
       let dataArray = new Uint8Array(data);
@@ -39,26 +51,35 @@ export default function PlayAudio() {
     await Audio.Sound.createAsync({ uri: uri }, { shouldPlay: true });
   };
 
+    const hookedStyles = {
+        view: {
+            alignItems: 'center',
+            justifyContent: 'center'
+        },
+        button: {
+            alignItems: 'center',
+            borderTopLeftRadius: 50,
+            borderTopRightRadius: 50,
+            borderBottomLeftRadius: 50,
+            borderBottomRightRadius: 50,
+            height: "300px",
+            width: "100%",
+            fontSize: "50px",
+            backgroundColor: "#E9967A"
+        }
+        
+    }
+
   return (
-    <View alignItems="center" justifyContent="center">
+    <View style={hookedStyles.view}>
       <Button
-        alignItems="center"
         fullWidth
         type="Play Quack"
         variant="contained"
         color="secondary"
-        onPress={handleClick}
+        onClick={handleClick}
         title="Play Quack"
-        style={{
-          borderTopLeftRadius: 50,
-          borderTopRightRadius: 50,
-          borderBottomLeftRadius: 50,
-          borderBottomRightRadius: 50,
-          height: "300px",
-          width: "100%",
-          fontSize: "50px",
-          backgroundColor: "#E9967A",
-        }}
+        style={hookedStyles.button}
       >
         GET GUD
       </Button>
