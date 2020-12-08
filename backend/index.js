@@ -21,9 +21,9 @@ app.use(express.json());
 app.use(express.static(__dirname + '/build'));
 
 // Sends domain name to client
-app.get('/getUri', (req, res) => {
-    res.json({ip: 'robust-primacy-294723.ue.r.appspot.com'});
-})
+// app.get('/getUri', (req, res) => {
+//     res.json({ip: 'robust-primacy-294723.ue.r.appspot.com'});
+// })
 
 app.post('/savingNickname', async (req, res) => {
     const task = {
@@ -111,8 +111,9 @@ io.on('connection', (socket) => {
         })
     })
 
-    socket.on('disconnect', () => {
+    socket.on('disconnect', (socket) => {
         console.log("Client disconnected");
+        console.log(socket.client.request);
     });
 
 });

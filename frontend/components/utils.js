@@ -1,10 +1,10 @@
 // Fetch url from server
-async function fetchUri() {
-    await fetch('/getUri')
-        .then(response => response.json())
-        .then(result => {return result.ip})
-        .catch(err => console.log(err))
-}
+// async function fetchUri() {
+//     await fetch('/getUri')
+//         .then(response => response.json())
+//         .then(result => {return result.ip})
+//         .catch(err => console.log(err))
+// }
 
 // Sends nickname to server and saves to database
 async function postData(data = {}) {
@@ -54,7 +54,7 @@ async function updateData(data = {}) {
 }
 
 export{
-    fetchUri,
+    // fetchUri,
     postData,
     updateData
 }

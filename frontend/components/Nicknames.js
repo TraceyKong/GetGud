@@ -44,7 +44,10 @@ export default function Nicknames() {
                     newName: name2
                 }
                 const response = await updateData(newData);
-                if(response.status == 200) console.log('Nickname updated:', name2);
+                if(response.status == 200) {
+                    console.log('Nickname updated:', name2);
+                    await AsyncStorage.setItem('nickname', name2);
+                }
                 else console.log('Failed to update.')
             }
 

@@ -1,18 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { View, Text } from "react-native";
 import io from "socket.io-client";
 import { btoa } from 'js-base64';
 import { Audio } from 'expo-av';
 import { Button } from "@material-ui/core";
-import { fetchUri } from './utils';
+// import { fetchUri } from './utils';
 
 export default function PlayAudio() {
 
     // For web version, url is fetched by fetchUri()
     // const [socket] = useState(() => io('http://localhost:8080/'), {
-    const [socket] = useState(() => io(fetchUri()), {
+    const socket = useMemo(() => io('/', {
+        reconnection: true,
+        reconnectionAttempts: Infinity,
+        timeout: 60000,
         transports: ['websocket']
-    });
+    }), []);
 
     useEffect(() => {
         let chunks = [];
@@ -27,7 +30,7 @@ export default function PlayAudio() {
             playAudio(audioArray);
             chunks = [];
         });
-    }, []);
+    }, [socket]);
 
     const handleClick = () => {
         socket.emit("sendAudio");
