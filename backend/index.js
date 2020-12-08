@@ -140,7 +140,7 @@ io.on('connection', (socket) => {
 
     socket.on('updateNickname', async (data) =>{
         const task = { // Creates object using key and updated username
-            key: data.uuid,
+            key: db.key(['users', Number(data.uuid)]),
             data: {
                 nickname: data.newName,
                 socket_key: curr_connection
