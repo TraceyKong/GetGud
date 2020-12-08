@@ -132,7 +132,7 @@ io.on('connection', (socket) => {
             // Saves the entity
             await db.save(task);
             // console.log(`Saved ${task}`);
-            socket.send('receiveKey', curr_connection);
+            io.to(curr_connection).emit('receiveKey', task);
         }catch(err){
             console.log(err)
         }
@@ -142,7 +142,7 @@ io.on('connection', (socket) => {
         const task = { // Creates object using key and updated username
             key: data.uuid,
             data: {
-                nickname: data.nickname,
+                nickname: data.newName,
                 socket_key: curr_connection
             }
         };

@@ -12,14 +12,17 @@ export default function Nicknames(props) {
     const [name2, setName2] = useState('');
     const [hasNickname, setHasNickname] = useState(false);
     const [nickname, setNickname] = useState('');
+    const [theuuid, setTheuuid] = useState('');
 
     useEffect(() => {
         const loadData = async () => {
             try {
                 const value = await AsyncStorage.getItem('nickname');
+                const uuid = await AsyncStorage.getItem('uuid');
                 if(value != null){
                     setNickname(value);
                     setHasNickname(true);
+                    setTheuuid(uuid);
                 }
             } catch(err) {
                 console.log(err);
@@ -27,8 +30,12 @@ export default function Nicknames(props) {
         }
         loadData();
 
-        socket.on('receiveKey', (data) => {
-            console.log(data);
+        socket.on('receiveKey', async (data) => {
+            console.log(data.key.id);
+            let thing = data.key.id;
+            await AsyncStorage.setItem('uuid', thing);
+            const some_uuid = await AsyncStorage.getItem('uuid');
+            setTheuuid(some_uuid);
         })
     }, [])
 
@@ -72,6 +79,8 @@ export default function Nicknames(props) {
                     <Text style={{ fontSize: "50px" }}>
                         Your name is currently {""}
                         <Text style={{ fontWeight: "bold" }}>{nickname}</Text>
+                        Your uuid is currently {""}
+                        <Text style={{ fontWeight: "bold" }}>{theuuid}</Text>
                     </Text>
                 ) : (
                     <Text style={{ fontSize: "50px" }}>
