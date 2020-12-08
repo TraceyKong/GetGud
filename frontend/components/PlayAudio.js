@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import { btoa } from 'js-base64';
 import { Audio } from 'expo-av';
 import { Button } from "@material-ui/core";

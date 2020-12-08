@@ -3,7 +3,6 @@ import { View, TextInput, Text } from "react-native";
 import { Button } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { postData, updateData } from './utils';
 
 export default function Nicknames(props) {
 
@@ -12,17 +11,14 @@ export default function Nicknames(props) {
     const [name2, setName2] = useState('');
     const [hasNickname, setHasNickname] = useState(false);
     const [nickname, setNickname] = useState('');
-    const [theuuid, setTheuuid] = useState('');
 
     useEffect(() => {
         const loadData = async () => {
             try {
                 const value = await AsyncStorage.getItem('nickname');
-                const uuid = await AsyncStorage.getItem('uuid');
                 if(value != null){
                     setNickname(value);
                     setHasNickname(true);
-                    setTheuuid(uuid);
                 }
             } catch(err) {
                 console.log(err);
@@ -31,11 +27,8 @@ export default function Nicknames(props) {
         loadData();
 
         socket.on('receiveKey', async (data) => {
-            console.log(data.key.name);
-            let thing = data.key.name;
-            await AsyncStorage.setItem('uuid', thing);
-            const some_uuid = await AsyncStorage.getItem('uuid');
-            setTheuuid(some_uuid);
+            let db_id = data.key.name;
+            await AsyncStorage.setItem('uuid', db_id);
         })
     }, [])
 
@@ -44,14 +37,10 @@ export default function Nicknames(props) {
 
         try {
             if(!hasNickname) {
-                // const response = await postData({ data: name2 });
-                // const data = await response.json();
-                // await AsyncStorage.setItem('uuid', socket.id);
                 socket.emit('saveNickname', {
                     nickname: name2 
                 });
                 setHasNickname(true);
-                console.log('Nickname saved:', name2);
                 await AsyncStorage.setItem('nickname', name2);
             } else {
                 let stored_uuid = await AsyncStorage.getItem('uuid');
@@ -60,12 +49,7 @@ export default function Nicknames(props) {
                     newName: name2
                 }
                 socket.emit('updateNickname', newData);
-                // const response = await updateData(newData);
-                // if(response.status == 200) {
-                console.log('Nickname updated:', name2);
-                await AsyncStorage.setItem('nickname', name2);
-                // }
-                // else console.log('Failed to update.')              
+                await AsyncStorage.setItem('nickname', name2);           
             }
             setNickname(name2);
         } catch(err) {
@@ -79,8 +63,6 @@ export default function Nicknames(props) {
                     <Text style={{ fontSize: "50px" }}>
                         Your name is currently {""}
                         <Text style={{ fontWeight: "bold" }}>{nickname}</Text>
-                        Your uuid is currently {""}
-                        <Text style={{ fontWeight: "bold" }}>{theuuid}</Text>
                     </Text>
                 ) : (
                     <Text style={{ fontSize: "50px" }}>
