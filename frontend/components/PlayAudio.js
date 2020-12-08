@@ -3,6 +3,7 @@ import { View } from "react-native";
 import { btoa } from 'js-base64';
 import { Audio } from 'expo-av';
 import { Button } from "@material-ui/core";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function PlayAudio(props) {
 
@@ -23,8 +24,14 @@ export default function PlayAudio(props) {
         });
     }, [socket]);
 
-    const handleClick = () => {
-        socket.emit("sendAudio");
+    const handleClick = async () => {
+        const value = await AsyncStorage.getItem('nickname');
+        if(value != null){
+            socket.emit("sendAudio");
+        }
+        else{
+            alert('Enter a nickname!');
+        }
     };
 
     const playAudio = async (arr) => {
