@@ -16,30 +16,30 @@ export default function App() {
 		transports: ['websocket']
 	}), []);
 
-return (
-	<Box
-		display="flex"
-		alignItems="center"
-		justifyContent="center"
-		style={{ height: "100%" }}
-	>
-		<View>
-			<Grid
-			style={{ width: "500px" }}
-			size="medium"
-			container
-			spacing={2}
-			direction="row"
-			>
-			<StatusBar style="auto" />
-			<Grid item xs={12}>
-				<Nicknames socket={socket}/>
-			</Grid>
-			<Grid item xs={12}>
-				<PlayAudio socket={socket}/>
-			</Grid>
-			</Grid>
-		</View>
-	</Box>
-);
+	return (
+		<Box
+			display="flex"
+			alignItems="center"
+			justifyContent="center"
+			style={{ height: "100%" }}
+		>
+			<View>
+				<Grid
+				style={{ width: "500px" }}
+				size="medium"
+				container
+				spacing={2}
+				direction="row"
+				>
+				<StatusBar style="auto" />
+				<Grid item xs={12}>
+					<Nicknames socket={socket}/>
+				</Grid>
+				<Grid item xs={12}>
+					<PlayAudio socket={socket}/>
+				</Grid>
+				</Grid>
+			</View>
+		</Box>
+	);
 }

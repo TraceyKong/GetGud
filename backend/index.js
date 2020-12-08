@@ -4,7 +4,7 @@ const {Datastore} = require('@google-cloud/datastore');
 const {Storage} = require('@google-cloud/storage');
 const cors = require('cors');
 
-Database
+// Database
 const db = new Datastore();
 
 // Cloud Storage
@@ -61,7 +61,7 @@ io.on('connection', (socket) => {
         try{
             // Saves the entity
             await db.save(task);
-            io.to(curr_connection).emit('receiveKey', task);
+            // io.to(curr_connection).emit('receiveKey', task);
         }catch(err){
             console.log(err);
         }
