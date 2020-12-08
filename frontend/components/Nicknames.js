@@ -26,6 +26,10 @@ export default function Nicknames(props) {
             }
         }
         loadData();
+
+        socket.on('receiveKey', (data) => {
+            console.log(data);
+        })
     }, [])
 
     const handleSubmit = async (event) => {
@@ -33,27 +37,30 @@ export default function Nicknames(props) {
 
         try {
             if(!hasNickname) {
-                const response = await postData({ data: name2 });
-                const data = await response.json();
-                await AsyncStorage.setItem('UuID', data.key.id);
+                // const response = await postData({ data: name2 });
+                // const data = await response.json();
+                // await AsyncStorage.setItem('uuid', socket.id);
+                socket.emit('saveNickname', {
+                    nickname: name2 
+                });
                 setHasNickname(true);
                 console.log('Nickname saved:', name2);
                 await AsyncStorage.setItem('nickname', name2);
-                setNickname(name2);
             } else {
-                const stored_uuid = await AsyncStorage.getItem('UuID');
+                let stored_uuid = await AsyncStorage.getItem('uuid');
                 const newData = {
-                    data: stored_uuid,
+                    uuid: stored_uuid,
                     newName: name2
                 }
-                const response = await updateData(newData);
-                if(response.status == 200) {
-                    console.log('Nickname updated:', name2);
-                    await AsyncStorage.setItem('nickname', name2);
-                }
-                else console.log('Failed to update.')
+                socket.emit('updateNickname', newData);
+                // const response = await updateData(newData);
+                // if(response.status == 200) {
+                console.log('Nickname updated:', name2);
+                await AsyncStorage.setItem('nickname', name2);
+                // }
+                // else console.log('Failed to update.')              
             }
-
+            setNickname(name2);
         } catch(err) {
             console.log(err);
         }

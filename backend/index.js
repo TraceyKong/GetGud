@@ -100,6 +100,7 @@ const io = require('socket.io')(server, {
 io.on('connection', (socket) => {
     console.log("New client connected");
     const curr_connection = socket.id;
+    console.log(curr_connection);
 
     socket.on('sendAudio', () => {
         const remoteFile = bucket.file('On_Sight.mp3');
@@ -116,7 +117,43 @@ io.on('connection', (socket) => {
         remoteReadStream.on('end', () => {
             socket.broadcast.emit('end');
         })
-    })
+    });
+
+    socket.on('saveNickname', async (data) => {
+        const task = {
+            key: db.key('users'),
+            data:{
+                nickname: data.nickname,
+                socket_key: curr_connection
+            }
+        };
+
+        try{
+            // Saves the entity
+            await db.save(task);
+            // console.log(`Saved ${task}`);
+            socket.send('receiveKey', curr_connection);
+        }catch(err){
+            console.log(err)
+        }
+    });
+
+    socket.on('updateNickname', async (data) =>{
+        const task = { // Creates object using key and updated username
+            key: data.uuid,
+            data: {
+                nickname: data.nickname,
+                socket_key: curr_connection
+            }
+        };
+    
+        try {
+            await db.save(task); // Updates the record in the db with the same key with the info in 'task'
+            console.log('UPDATE SUCCESS')
+        } catch(err) {
+            console.log('UPDATE FAIL')
+        }
+    });
 
     socket.on('disconnect', (socket) => {
         console.log("Client disconnected");

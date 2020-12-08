@@ -33,7 +33,7 @@ return (
 			>
 			<StatusBar style="auto" />
 			<Grid item xs={12}>
-				{/* <Nicknames socket={socket}/> */}
+				<Nicknames socket={socket}/>
 			</Grid>
 			<Grid item xs={12}>
 				<PlayAudio socket={socket}/>
