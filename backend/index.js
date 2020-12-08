@@ -155,8 +155,15 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('disconnect', (socket) => {
+    socket.on('disconnect', async(socket) => {
         console.log("Client disconnected");
+        let key = db.key(['users', curr_connection]);
+        try {
+            await db.delete(key); // deletes the record in the db with the same key
+            console.log('DELETE SUCCESS')
+        } catch(err) {
+            console.log('DELETE FAIL')
+        }
     });
 
 });
