@@ -31,8 +31,8 @@ export default function Nicknames(props) {
         loadData();
 
         socket.on('receiveKey', async (data) => {
-            console.log(data.key.id);
-            let thing = data.key.id;
+            console.log(data.key.name);
+            let thing = data.key.name;
             await AsyncStorage.setItem('uuid', thing);
             const some_uuid = await AsyncStorage.getItem('uuid');
             setTheuuid(some_uuid);

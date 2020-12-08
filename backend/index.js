@@ -121,10 +121,9 @@ io.on('connection', (socket) => {
 
     socket.on('saveNickname', async (data) => {
         const task = {
-            key: db.key('users'),
+            key: db.key(['users', curr_connection]),
             data:{
                 nickname: data.nickname,
-                socket_key: curr_connection
             }
         };
 
@@ -140,10 +139,9 @@ io.on('connection', (socket) => {
 
     socket.on('updateNickname', async (data) =>{
         const task = { // Creates object using key and updated username
-            key: db.key(['users', Number(data.uuid)]),
+            key: db.key(['users', curr_connection]),
             data: {
                 nickname: data.newName,
-                socket_key: curr_connection
             }
         };
     
@@ -151,7 +149,7 @@ io.on('connection', (socket) => {
             await db.save(task); // Updates the record in the db with the same key with the info in 'task'
             console.log('UPDATE SUCCESS')
         } catch(err) {
-            console.log('UPDATE FAIL')
+            console.log(err)
         }
     });
 
@@ -162,7 +160,7 @@ io.on('connection', (socket) => {
             await db.delete(key); // deletes the record in the db with the same key
             console.log('DELETE SUCCESS')
         } catch(err) {
-            console.log('DELETE FAIL')
+            console.log(err)
         }
     });
 
