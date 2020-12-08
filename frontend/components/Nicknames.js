@@ -5,7 +5,10 @@ import Grid from "@material-ui/core/Grid";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { postData, updateData } from './utils';
 
-export default function Nicknames() {
+export default function Nicknames(props) {
+
+    const socket = props.socket;
+
     const [name2, setName2] = useState('');
     const [hasNickname, setHasNickname] = useState(false);
     const [nickname, setNickname] = useState('');

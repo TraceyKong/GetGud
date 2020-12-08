@@ -5,7 +5,13 @@ const {Storage} = require('@google-cloud/storage');
 const cors = require('cors');
 
 // Database
-const db = new Datastore();
+// const db = new Datastore();
+
+// Database
+const db = new Datastore({
+    projectId: process.env.GCP_PROJECT_ID,
+    keyFilename: process.env.GCP_KEY_FILENAME
+});
 
 // Cloud Storage
 const storage = new Storage();
@@ -93,6 +99,7 @@ const io = require('socket.io')(server, {
 
 io.on('connection', (socket) => {
     console.log("New client connected");
+    const curr_connection = socket.id;
 
     socket.on('sendAudio', () => {
         const remoteFile = bucket.file('On_Sight.mp3');
@@ -113,7 +120,6 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', (socket) => {
         console.log("Client disconnected");
-        console.log(socket.client.request);
     });
 
 });
