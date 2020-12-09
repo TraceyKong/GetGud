@@ -61,7 +61,7 @@ io.on('connection', async (socket) => {
         const query = db.createQuery('users');
         const [tasks] = await db.runQuery(query);
         tasks.forEach(task => user_names.push(task.nickname));
-        socket.emit('receiveNickname', {
+        socket.broadcast.emit('receiveNickname', {
             usernames: user_names
         });
     });

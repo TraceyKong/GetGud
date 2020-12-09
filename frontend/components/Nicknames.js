@@ -47,6 +47,7 @@ export default function Nicknames(props) {
                 await AsyncStorage.setItem('nickname', name2);           
             }
             setNickname(name2);
+            socket.emit('getNicknames');
         } catch(err) {
             console.log(err);
         }
