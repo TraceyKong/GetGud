@@ -28,24 +28,28 @@ export default function ConcurrentUser(props){
     return(
         <View>
             <Text
-                style={{ fontSize: "50px" }}
+                style={{ fontSize: "25px" }}
             >
-                Online User Count: {userCount}
+                Online Users: {userCount}
             </Text>
 
             <Button
+                fullWidth
+                type="submit"
+                variant="outlined"
+                color="secondary"
                 onClick={handleClick}
             >
                 Refresh Online Users
             </Button>
 
             <Text
-                style={{ fontSize: "50px" }}
+                style={{ fontSize: "25px" }}
             >
                 List of Users: {"\n"}
-                    {userNames.map((user, key) => (
-                        <Text key={key}> {user} {"\n"}</Text>)
-                    )}
+                {userNames.map((user, key) => (
+                    <Text key={key}> {user} {"\n"}</Text>)
+                )}
             </Text>
         </View>
     )

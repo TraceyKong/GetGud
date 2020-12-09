@@ -53,14 +53,19 @@ io.on('connection', async (socket) => {
         const query = db.createQuery('users');
         const [tasks] = await db.runQuery(query);
         tasks.forEach(task => user_names.push(task.nickname));
-        console.log(tasks);
         socket.emit('receiveNickname', {
             usernames: user_names
         });
     });
 
     socket.on('sendAudio', (data) => {
-        const remoteFile = bucket.file('On_Sight.mp3');
+
+        const audioFileNumber = Math.floor( (Math.random() * 10) + 1 );
+
+        const audioFileName = "Get_Gud_" + audioFileNumber.toString() + ".mp3";
+
+        // const remoteFile = bucket.file('On_Sight.mp3');
+        const remoteFile = bucket.file(audioFileName);
         const remoteReadStream = remoteFile.createReadStream();
 
         remoteReadStream.on('open', () => {
