@@ -9,6 +9,10 @@ export default function ConcurrentUser(props){
     const [userNames, setUserNames] = useState([]);
     
     useEffect(() => {
+        setInterval( () => {
+            socket.emit('counter');
+        }, 3000);
+
         socket.on('counter', (data) =>{
             setUserCount(data.user_count);
         });

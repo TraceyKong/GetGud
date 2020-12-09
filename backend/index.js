@@ -41,12 +41,20 @@ io.on('connection', async (socket) => {
     const curr_connection = socket.id;
 
     user_count++;
+
+    let user_names = [];
+    const query = db.createQuery('users');
+    const [tasks] = await db.runQuery(query);
+    tasks.forEach(task => user_names.push(task.nickname));
+    socket.emit('receiveNickname', {
+        usernames: user_names
+    });
     
-    setInterval( () => {
+    socket.on('counter', () => {
         socket.emit('counter', {
             user_count: user_count,
         });
-    },3000);
+    });
 
     socket.on('getNicknames', async() => {
         let user_names = [];
@@ -99,6 +107,14 @@ io.on('connection', async (socket) => {
         }catch(err){
             console.log(err);
         }
+
+        let user_names = [];
+        const query = db.createQuery('users');
+        const [tasks] = await db.runQuery(query);
+        tasks.forEach(task => user_names.push(task.nickname));
+        socket.emit('receiveNickname', {
+            usernames: user_names
+        });
     });
 
     socket.on('updateNickname', async (data) =>{
@@ -115,6 +131,14 @@ io.on('connection', async (socket) => {
         } catch(err) {
             console.log(err);
         }
+
+        let user_names = [];
+        const query = db.createQuery('users');
+        const [tasks] = await db.runQuery(query);
+        tasks.forEach(task => user_names.push(task.nickname));
+        socket.emit('receiveNickname', {
+            usernames: user_names
+        });
     });
 
     socket.on('disconnect', async () => {
@@ -131,6 +155,14 @@ io.on('connection', async (socket) => {
         } catch(err) {
             console.log(err);
         }
+
+        let user_names = [];
+        const query = db.createQuery('users');
+        const [tasks] = await db.runQuery(query);
+        tasks.forEach(task => user_names.push(task.nickname));
+        socket.broadcast.emit('receiveNickname', {
+            usernames: user_names
+        });
     });
 
 });
