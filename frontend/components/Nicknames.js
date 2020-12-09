@@ -19,6 +19,9 @@ export default function Nicknames(props) {
                 if(value != null){
                     setNickname(value);
                     setHasNickname(true);
+                    socket.emit('updateNickname', {
+                        newName: value
+                    });
                 }
             } catch(err) {
                 console.log(err);
