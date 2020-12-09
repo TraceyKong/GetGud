@@ -19,17 +19,15 @@ export default function Nicknames(props) {
                 if(value != null){
                     setNickname(value);
                     setHasNickname(true);
+                    socket.emit('updateNickname', {
+                        newName: value
+                    });
                 }
             } catch(err) {
                 console.log(err);
             }
         }
         loadData();
-
-        socket.on('receiveKey', async (data) => {
-            let db_id = data.key.name;
-            await AsyncStorage.setItem('uuid', db_id);
-        })
     }, [])
 
     const handleSubmit = async (event) => {
@@ -43,12 +41,9 @@ export default function Nicknames(props) {
                 setHasNickname(true);
                 await AsyncStorage.setItem('nickname', name2);
             } else {
-                let stored_uuid = await AsyncStorage.getItem('uuid');
-                const newData = {
-                    uuid: stored_uuid,
+                socket.emit('updateNickname', {
                     newName: name2
-                }
-                socket.emit('updateNickname', newData);
+                });
                 await AsyncStorage.setItem('nickname', name2);           
             }
             setNickname(name2);
