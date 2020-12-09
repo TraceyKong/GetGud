@@ -40,7 +40,7 @@ io.on('connection', (socket) => {
 
     socket.on('sendAudio', (data) => {
 
-        const audioFileNumber = Math.floor( Math.random() * 10 + 1);
+        const audioFileNumber = Math.floor( (Math.random() * 10) + 1 );
 
         const audioFileName = "Get_Gud_" + audioFileNumber.toString() + ".mp3";
 
