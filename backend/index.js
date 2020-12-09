@@ -5,12 +5,7 @@ const {Storage} = require('@google-cloud/storage');
 const cors = require('cors');
 
 // Database
-// const db = new Datastore();
-
-const db = new Datastore({
-    projectId: process.env.GCP_PROJECT_ID,
-    keyFilename: process.env.GCP_KEY_FILENAME
-});
+const db = new Datastore();
 
 // Cloud Storage
 const storage = new Storage();
