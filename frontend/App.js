@@ -10,7 +10,7 @@ import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 
 export default function App() {
-  const socket = useMemo(() => io("http://192.168.1.179:8080/", {
+  const socket = useMemo(() => io('/', {
         reconnection: true,
         reconnectionAttempts: Infinity,
         timeout: 60000,

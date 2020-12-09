@@ -5,12 +5,7 @@ const {Storage} = require('@google-cloud/storage');
 const cors = require('cors');
 
 // Database
-// const db = new Datastore();
-
-const db = new Datastore({
-    projectId: process.env.GCP_PROJECT_ID,
-    keyFilename: process.env.GCP_KEY_FILENAME
-});
+const db = new Datastore();
 
 // Cloud Storage
 const storage = new Storage();
@@ -51,7 +46,7 @@ io.on('connection', async (socket) => {
     });
     
     socket.on('counter', () => {
-        socket.emit('counter', {
+        io.emit('counter', {
             user_count: user_count,
         });
     });
@@ -68,12 +63,12 @@ io.on('connection', async (socket) => {
 
     socket.on('sendAudio', (data) => {
 
-        const audioFileNumber = Math.floor( (Math.random() * 10) + 1 );
+        // const audioFileNumber = Math.floor( (Math.random() * 10) + 1 );
 
-        const audioFileName = "Get_Gud_" + audioFileNumber.toString() + ".mp3";
+        // const audioFileName = "Get_Gud_" + audioFileNumber.toString() + ".mp3";
 
         // const remoteFile = bucket.file('On_Sight.mp3');
-        const remoteFile = bucket.file(audioFileName);
+        const remoteFile = bucket.file('Get_Gud_10.mp3');
         const remoteReadStream = remoteFile.createReadStream();
 
         remoteReadStream.on('open', () => {
@@ -127,7 +122,7 @@ io.on('connection', async (socket) => {
     socket.on('disconnect', async () => {
         console.log("Client disconnected");
         user_count--;
-        socket.broadcast.emit('counter', {
+        io.emit('counter', {
             user_count: user_count
         });
 
