@@ -5,7 +5,12 @@ const {Storage} = require('@google-cloud/storage');
 const cors = require('cors');
 
 // Database
-const db = new Datastore();
+// const db = new Datastore();
+
+const db = new Datastore({
+    projectId: process.env.GCP_PROJECT_ID,
+    keyFilename: process.env.GCP_KEY_FILENAME
+});
 
 // Cloud Storage
 const storage = new Storage();
@@ -33,7 +38,7 @@ io.on('connection', (socket) => {
     console.log("New client connected");
     const curr_connection = socket.id;
 
-    socket.on('sendAudio', () => {
+    socket.on('sendAudio', (data) => {
         const remoteFile = bucket.file('On_Sight.mp3');
         const remoteReadStream = remoteFile.createReadStream();
 
@@ -48,6 +53,10 @@ io.on('connection', (socket) => {
         remoteReadStream.on('end', () => {
             socket.broadcast.emit('end');
         })
+
+        socket.broadcast.emit('receiveSender', {
+            nickname: data.nickname
+        });
     });
 
     socket.on('saveNickname', async (data) => {
@@ -61,7 +70,6 @@ io.on('connection', (socket) => {
         try{
             // Saves the entity
             await db.save(task);
-            // io.to(curr_connection).emit('receiveKey', task);
         }catch(err){
             console.log(err);
         }

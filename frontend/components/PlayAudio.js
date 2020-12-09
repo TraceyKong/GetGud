@@ -27,7 +27,9 @@ export default function PlayAudio(props) {
     const handleClick = async () => {
         const value = await AsyncStorage.getItem('nickname');
         if(value != null){
-            socket.emit("sendAudio");
+            socket.emit("sendAudio", {
+                nickname: value
+            });
         }
         else{
             alert('Enter a nickname!');

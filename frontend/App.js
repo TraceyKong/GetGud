@@ -4,12 +4,13 @@ import { View } from "react-native";
 import io from "socket.io-client";
 import PlayAudio from "./components/PlayAudio";
 import Nicknames from "./components/Nicknames";
+import DisplayRoom from "./components/DisplayRoom";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 
 export default function App() {
 
-	const socket = useMemo(() => io('/', {
+	const socket = useMemo(() => io('http://192.168.1.179:8080/', {
 		reconnection: true,
 		reconnectionAttempts: Infinity,
 		timeout: 60000,
@@ -32,6 +33,9 @@ export default function App() {
 				direction="row"
 				>
 				<StatusBar style="auto" />
+				<Grid item xs={12}>
+					<DisplayRoom socket={socket}/>
+				</Grid>
 				<Grid item xs={12}>
 					<Nicknames socket={socket}/>
 				</Grid>

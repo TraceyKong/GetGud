@@ -25,11 +25,6 @@ export default function Nicknames(props) {
             }
         }
         loadData();
-
-        // socket.on('receiveKey', async (data) => {
-        //     let db_id = data.key.name;
-        //     await AsyncStorage.setItem('uuid', db_id);
-        // })
     }, [])
 
     const handleSubmit = async (event) => {
