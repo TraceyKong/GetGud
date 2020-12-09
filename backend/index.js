@@ -5,7 +5,12 @@ const {Storage} = require('@google-cloud/storage');
 const cors = require('cors');
 
 // Database
-const db = new Datastore();
+// const db = new Datastore();
+
+const db = new Datastore({
+    projectId: process.env.GCP_PROJECT_ID,
+    keyFilename: process.env.GCP_KEY_FILENAME
+});
 
 // Cloud Storage
 const storage = new Storage();
@@ -29,9 +34,30 @@ const io = require('socket.io')(server, {
     }
 });
 
-io.on('connection', (socket) => {
+var user_count = 0;
+
+io.on('connection', async (socket) => {
     console.log("New client connected");
     const curr_connection = socket.id;
+
+    user_count++;
+    
+    setInterval( () => {
+        socket.emit('counter', {
+            user_count: user_count,
+        });
+    },3000);
+
+    socket.on('getNicknames', async() => {
+        let user_names = [];
+        const query = db.createQuery('users');
+        const [tasks] = await db.runQuery(query);
+        tasks.forEach(task => user_names.push(task.nickname));
+        console.log(tasks);
+        socket.emit('receiveNickname', {
+            usernames: user_names
+        });
+    });
 
     socket.on('sendAudio', (data) => {
         const remoteFile = bucket.file('On_Sight.mp3');
@@ -88,6 +114,11 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', async () => {
         console.log("Client disconnected");
+        user_count--;
+        socket.broadcast.emit('counter', {
+            user_count: user_count
+        });
+
         let key = db.key(['users', curr_connection]);
         try {
             await db.delete(key); // deletes the record in the db with the same key
