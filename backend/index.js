@@ -39,7 +39,13 @@ io.on('connection', (socket) => {
     const curr_connection = socket.id;
 
     socket.on('sendAudio', (data) => {
-        const remoteFile = bucket.file('On_Sight.mp3');
+
+        const audioFileNumber = Math.floor( (Math.random() * 10) + 1 );
+
+        const audioFileName = "Get_Gud_" + audioFileNumber.toString() + ".mp3";
+
+        // const remoteFile = bucket.file('On_Sight.mp3');
+        const remoteFile = bucket.file(audioFileName);
         const remoteReadStream = remoteFile.createReadStream();
 
         remoteReadStream.on('open', () => {
