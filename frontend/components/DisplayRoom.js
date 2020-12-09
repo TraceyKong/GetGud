@@ -1,3 +1,4 @@
+import { Grid } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { View , Text } from "react-native";
 
@@ -28,18 +29,20 @@ export default function DisplayRoom(props){
 
     return(
         <View>
-            {open ? (
-                    <Text
-                        open={open}
-                        onClose={handleClose}
-                        style={{ fontSize: "50px" }}
-                    >
-                        {senderNickname} has told you to get gud
-                    </Text>
-                ) : (
-                    <Text></Text>
-                )
-            }
+            <Grid item xs>
+                {open ? (
+                        <Text
+                            open={open}
+                            onClose={handleClose}
+                            style={{ fontSize: "30px" }}
+                        >
+                            {senderNickname} has told you to get gud
+                        </Text>
+                    ) : (
+                        <Text></Text>
+                    )
+                }
+            </Grid>
         </View>
     )
 }

@@ -5,13 +5,12 @@ import io from "socket.io-client";
 import PlayAudio from "./components/PlayAudio";
 import Nicknames from "./components/Nicknames";
 import DisplayRoom from "./components/DisplayRoom";
+import ConcurrentUser from "./components/ConcurrentUser";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 
 export default function App() {
-  const socket = useMemo(
-    () =>
-      io("http://192.168.1.179:8080/", {
+  const socket = useMemo(() => io("http://192.168.1.179:8080/", {
         reconnection: true,
         reconnectionAttempts: Infinity,
         timeout: 60000,
@@ -32,11 +31,11 @@ export default function App() {
           style={{ width: "1000px" }}
           size="medium"
           container
-          spacing={2}
+          spacing={10}
           direction="row"
         >
           <StatusBar style="auto" />
-          <Grid item xs={6}>
+          <Grid item xs>
             <DisplayRoom socket={socket} />
           </Grid>
           <Grid item xs={6}>
@@ -46,6 +45,9 @@ export default function App() {
             <Grid item xs={12}>
               <PlayAudio socket={socket} />
             </Grid>
+          </Grid>
+		  <Grid item xs>
+            <ConcurrentUser socket={socket} />
           </Grid>
         </Grid>
       </View>

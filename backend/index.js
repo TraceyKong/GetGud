@@ -34,9 +34,37 @@ const io = require('socket.io')(server, {
     }
 });
 
-io.on('connection', (socket) => {
+var user_count = 0;
+
+io.on('connection', async (socket) => {
     console.log("New client connected");
     const curr_connection = socket.id;
+
+    user_count++;
+
+    let user_names = [];
+    const query = db.createQuery('users');
+    const [tasks] = await db.runQuery(query);
+    tasks.forEach(task => user_names.push(task.nickname));
+    io.emit('receiveNickname', {
+        usernames: user_names
+    });
+    
+    socket.on('counter', () => {
+        socket.emit('counter', {
+            user_count: user_count,
+        });
+    });
+
+    socket.on('getNicknames', async() => {
+        let user_names = [];
+        const query = db.createQuery('users');
+        const [tasks] = await db.runQuery(query);
+        tasks.forEach(task => user_names.push(task.nickname));
+        io.emit('receiveNickname', {
+            usernames: user_names
+        });
+    });
 
     socket.on('sendAudio', (data) => {
 
@@ -91,7 +119,6 @@ io.on('connection', (socket) => {
     
         try {
             await db.save(task); // Updates the record in the db with the same key with the info in 'task'
-            console.log('UPDATE SUCCESS');
         } catch(err) {
             console.log(err);
         }
@@ -99,6 +126,11 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', async () => {
         console.log("Client disconnected");
+        user_count--;
+        socket.broadcast.emit('counter', {
+            user_count: user_count
+        });
+
         let key = db.key(['users', curr_connection]);
         try {
             await db.delete(key); // deletes the record in the db with the same key
@@ -106,6 +138,14 @@ io.on('connection', (socket) => {
         } catch(err) {
             console.log(err);
         }
+
+        let user_names = [];
+        const query = db.createQuery('users');
+        const [tasks] = await db.runQuery(query);
+        tasks.forEach(task => user_names.push(task.nickname));
+        io.emit('receiveNickname', {
+            usernames: user_names
+        });
     });
 
 });
