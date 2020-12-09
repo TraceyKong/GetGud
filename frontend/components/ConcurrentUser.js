@@ -20,7 +20,6 @@ export default function ConcurrentUser(props){
         socket.on('receiveNickname', (data) => {
             const temp = data.usernames;
             setUserNames(temp);
-            console.log('receive-user', userNames);
         })
 
     }, [socket]);

@@ -46,7 +46,7 @@ io.on('connection', async (socket) => {
     const query = db.createQuery('users');
     const [tasks] = await db.runQuery(query);
     tasks.forEach(task => user_names.push(task.nickname));
-    socket.emit('receiveNickname', {
+    io.emit('receiveNickname', {
         usernames: user_names
     });
     
@@ -61,7 +61,7 @@ io.on('connection', async (socket) => {
         const query = db.createQuery('users');
         const [tasks] = await db.runQuery(query);
         tasks.forEach(task => user_names.push(task.nickname));
-        socket.broadcast.emit('receiveNickname', {
+        io.emit('receiveNickname', {
             usernames: user_names
         });
     });
@@ -107,14 +107,6 @@ io.on('connection', async (socket) => {
         }catch(err){
             console.log(err);
         }
-
-        let user_names = [];
-        const query = db.createQuery('users');
-        const [tasks] = await db.runQuery(query);
-        tasks.forEach(task => user_names.push(task.nickname));
-        socket.emit('receiveNickname', {
-            usernames: user_names
-        });
     });
 
     socket.on('updateNickname', async (data) =>{
@@ -127,18 +119,9 @@ io.on('connection', async (socket) => {
     
         try {
             await db.save(task); // Updates the record in the db with the same key with the info in 'task'
-            console.log('UPDATE SUCCESS');
         } catch(err) {
             console.log(err);
         }
-
-        let user_names = [];
-        const query = db.createQuery('users');
-        const [tasks] = await db.runQuery(query);
-        tasks.forEach(task => user_names.push(task.nickname));
-        socket.emit('receiveNickname', {
-            usernames: user_names
-        });
     });
 
     socket.on('disconnect', async () => {
@@ -160,7 +143,7 @@ io.on('connection', async (socket) => {
         const query = db.createQuery('users');
         const [tasks] = await db.runQuery(query);
         tasks.forEach(task => user_names.push(task.nickname));
-        socket.broadcast.emit('receiveNickname', {
+        io.emit('receiveNickname', {
             usernames: user_names
         });
     });

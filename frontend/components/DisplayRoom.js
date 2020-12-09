@@ -34,7 +34,7 @@ export default function DisplayRoom(props){
                         <Text
                             open={open}
                             onClose={handleClose}
-                            style={{ fontSize: "50px" }}
+                            style={{ fontSize: "30px" }}
                         >
                             {senderNickname} has told you to get gud
                         </Text>
