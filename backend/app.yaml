@@ -6,4 +6,11 @@ automatic_scaling:
 
 network:
   session_affinity: true
+
+handlers:
+  - url: /
+    static_files: build/index.html
+    upload: build/index.html
+  - url: /
+    static_dir: build
 # [END appengine_websockets_yaml]

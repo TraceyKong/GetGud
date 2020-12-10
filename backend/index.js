@@ -20,6 +20,10 @@ app.use(express.json());
 // Sends web app to client
 app.use(express.static(__dirname + '/build'));
 
+app.get('/*', (req, res) => {
+    res.sendFile(__dirname + 'build/index.html');
+})
+
 // Websocket
 const server = require('http').createServer(app);
 const io = require('socket.io')(server, {
@@ -41,6 +45,7 @@ io.on('connection', async (socket) => {
     const query = db.createQuery('users');
     const [tasks] = await db.runQuery(query);
     tasks.forEach(task => user_names.push(task.nickname));
+
     io.emit('receiveNickname', {
         usernames: user_names
     });
@@ -62,30 +67,33 @@ io.on('connection', async (socket) => {
     });
 
     socket.on('sendAudio', (data) => {
+        try{
+            // const audioFileNumber = Math.floor( (Math.random() * 10) + 1 );
 
-        // const audioFileNumber = Math.floor( (Math.random() * 10) + 1 );
+            // const audioFileName = "Get_Gud_" + audioFileNumber.toString() + ".mp3";
 
-        // const audioFileName = "Get_Gud_" + audioFileNumber.toString() + ".mp3";
+            // const remoteFile = bucket.file('On_Sight.mp3');
+            const remoteFile = bucket.file('Get_Gud_10.mp3');
+            const remoteReadStream = remoteFile.createReadStream();
 
-        // const remoteFile = bucket.file('On_Sight.mp3');
-        const remoteFile = bucket.file('Get_Gud_10.mp3');
-        const remoteReadStream = remoteFile.createReadStream();
+            remoteReadStream.on('open', () => {
+                console.log('loading audio');
+            });
+            
+            remoteReadStream.on('data', chunk => {
+                socket.broadcast.emit('receiveAudio', chunk);
+            });
+            
+            remoteReadStream.on('end', () => {
+                socket.broadcast.emit('end');
+            })
 
-        remoteReadStream.on('open', () => {
-            console.log('loading audio');
-        });
-        
-        remoteReadStream.on('data', chunk => {
-            socket.broadcast.emit('receiveAudio', chunk);
-        });
-        
-        remoteReadStream.on('end', () => {
-            socket.broadcast.emit('end');
-        })
-
-        socket.broadcast.emit('receiveSender', {
-            nickname: data.nickname
-        });
+            socket.broadcast.emit('receiveSender', {
+                nickname: data.nickname
+            });
+        } catch (err) {
+            console.log(err);
+        }
     });
 
     socket.on('saveNickname', async (data) => {
